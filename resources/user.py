@@ -368,7 +368,7 @@ class UserValdationResource(Resource):
             connection = get_connection()
             # 이메일로 DB의 데이터를 가져온다.
             query = '''select * from user
-                        where userId = %s;'''
+                        where id = %s;'''
 
             record = (userId,  )
 
