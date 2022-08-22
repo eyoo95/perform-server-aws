@@ -372,8 +372,6 @@ class UserValdationResource(Resource):
 
             record = (userId,  )
 
-            print(userId)
-
             cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
 
             cursor.execute(query, record )
@@ -401,7 +399,6 @@ class UserValdationResource(Resource):
 
         # 비밀번호가 맞는지 확인
         user_info = result_list[0]
-        print(user_info)
         check = check_password(data['password'],user_info['password'])
         if check == False:
             return {'error':'비밀번호가 일치하지 않습니다.', 'error_no':7}, 400
