@@ -69,7 +69,7 @@ api.add_resource(PerformancePlaceDetailResource, '/performanceplacedetail/<plcId
 api.add_resource(PostingResource, '/posting')
 # 포스팅 하나 조회, 수정, 삭제 
 api.add_resource(PostingSpecificResource, '/posting/<int:postingId>')
-# 포스팅 추천 및 추천 취소
+# 포스팅 추천, 추천 취소
 api.add_resource(PostingRecommendResource, '/posting/recommend/<int:postingId>')
 # 내 포스팅 조회 
 api.add_resource(PostingMyPostingResource, '/posting/myposting')
