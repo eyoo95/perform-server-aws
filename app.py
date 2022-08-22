@@ -13,8 +13,6 @@ app = Flask(__name__)
 # 환경변수 세팅
 app.config.from_object(Config)
 
-
-
 # JWT 토큰 라이브러리 만들기
 jwt = JWTManager(app)
 
@@ -23,7 +21,6 @@ jwt = JWTManager(app)
 def check_if_token_is_revoke(jwt_header, jwt_payload):
     jti = jwt_payload['jti']
     return jti in jwt_blacklist
-
 
 api = Api(app)
 
