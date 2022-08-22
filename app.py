@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from config import Config
 from flask_restful import Api
 from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource
-from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UsereditResource
+from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
 
@@ -36,8 +36,14 @@ api.add_resource(UserLoginResource, '/user/login')
 api.add_resource(UserLogoutResource, '/user/logout')
 # 회원탈퇴
 api.add_resource(UserWithdrawalResource, '/user/withdrawal')
-# 회원정보 수정
-api.add_resource(UsereditResource, '/user/editinfo')
+# 회원 비밀번호 수정
+api.add_resource(UserEditPasswordResource, '/user/editpassword')
+# 회원 닉네임 수정
+api.add_resource(UserEditNicknameResource, '/user/editnickname')
+# 회원 나이 수정
+api.add_resource(UserEditAgeResource, '/user/editage')
+# 회원 성별 수정
+api.add_resource(UserEditGenderResource, '/user/editgender')
 
 # 해당 작품 리뷰 보기
 api.add_resource(ReviewSearchResource, '/review/<prfId>')

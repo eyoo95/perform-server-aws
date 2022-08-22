@@ -182,9 +182,8 @@ class UserWithdrawalResource(Resource):
 
         return {'result': 'success'} , 200
 
-# 회원정보 수정하는 클래스
-class UsereditResource(Resource):
-
+# 회원 비밀번호 수정하는 클래스
+class UserEditPasswordResource(Resource):
 
     @jwt_required()
     def put(self, userId) :
@@ -235,8 +234,156 @@ class UsereditResource(Resource):
         return {'result' :'success'}, 200
 
 
-        
+# 회원 닉네임 수정하는 클래스
+class UserEditNicknameResource(Resource):
+
+    @jwt_required()
+    def put(self, userId) :
+
+        # body에서 전달된 데이터를 처리
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        # 비밀번호 암호화
+        # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
+        if len(data['password']) < 4 or len(data['password'])>12:
+            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
+
+        hashed_password = hash_password(data['password'])
+
+        # 디비 업데이트 실행코드
+        try :
+            # 데이터 업데이트 
+            # 1. DB에 연결
+            connection = get_connection()
+
+            query = '''update user
+                        set password = %s,
+                        nickname = %s,
+                        gender = %s,
+                        age = %s
+                        where id = %s;'''
+
+            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+           
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # 5. 커넥션을 커밋해줘야 한다 => 디비에 영구적으로 반영하라는 뜻
+            connection.commit()
+
+            # 6. 자원 해제
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error' : str(e)}, 503
+
+        return {'result' :'success'}, 200        
 
 
+# 회원 나이 수정하는 클래스
+class UserEditAgeResource(Resource):
 
+    @jwt_required()
+    def put(self, userId) :
 
+        # body에서 전달된 데이터를 처리
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        # 비밀번호 암호화
+        # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
+        if len(data['password']) < 4 or len(data['password'])>12:
+            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
+
+        hashed_password = hash_password(data['password'])
+
+        # 디비 업데이트 실행코드
+        try :
+            # 데이터 업데이트 
+            # 1. DB에 연결
+            connection = get_connection()
+
+            query = '''update user
+                        set password = %s,
+                        nickname = %s,
+                        gender = %s,
+                        age = %s
+                        where id = %s;'''
+
+            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+           
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # 5. 커넥션을 커밋해줘야 한다 => 디비에 영구적으로 반영하라는 뜻
+            connection.commit()
+
+            # 6. 자원 해제
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error' : str(e)}, 503
+
+        return {'result' :'success'}, 200
+
+# 회원 성별 수정하는 클래스
+class UserEditGenderResource(Resource):
+
+    @jwt_required()
+    def put(self, userId) :
+
+        # body에서 전달된 데이터를 처리
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        # 비밀번호 암호화
+        # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
+        if len(data['password']) < 4 or len(data['password'])>12:
+            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
+
+        hashed_password = hash_password(data['password'])
+
+        # 디비 업데이트 실행코드
+        try :
+            # 데이터 업데이트 
+            # 1. DB에 연결
+            connection = get_connection()
+
+            query = '''update user
+                        set password = %s,
+                        nickname = %s,
+                        gender = %s,
+                        age = %s
+                        where id = %s;'''
+
+            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+           
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # 5. 커넥션을 커밋해줘야 한다 => 디비에 영구적으로 반영하라는 뜻
+            connection.commit()
+
+            # 6. 자원 해제
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error' : str(e)}, 503
+
+        return {'result' :'success'}, 200
