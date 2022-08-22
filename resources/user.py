@@ -401,6 +401,6 @@ class UserValdationResource(Resource):
         user_info = result_list[0]
         check = check_password(data['password'],user_info['password'])
         if check == False:
-            return {'error':'비밀번호가 맞지 않습니다.', 'error_no':7}, 400
+            return {'error':'비밀번호가 일치하지 않습니다.', 'error_no':7}, 400
         
         return {'result' : 'success'} ,200
