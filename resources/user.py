@@ -186,7 +186,7 @@ class UserWithdrawalResource(Resource):
 class UserEditPasswordResource(Resource):
 
     @jwt_required()
-    def put(self, userId) :
+    def put(self) :
 
         # body에서 전달된 데이터를 처리
         data = request.get_json()
@@ -207,12 +207,9 @@ class UserEditPasswordResource(Resource):
 
             query = '''update user
                         set password = %s,
-                        nickname = %s,
-                        gender = %s,
-                        age = %s
                         where id = %s;'''
 
-            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+            record = (hashed_password, userId)
            
             cursor = connection.cursor(dictionary = True)
 
@@ -238,18 +235,11 @@ class UserEditPasswordResource(Resource):
 class UserEditNicknameResource(Resource):
 
     @jwt_required()
-    def put(self, userId) :
+    def put(self) :
 
         # body에서 전달된 데이터를 처리
         data = request.get_json()
         userId = get_jwt_identity()
-
-        # 비밀번호 암호화
-        # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
-        if len(data['password']) < 4 or len(data['password'])>12:
-            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
-
-        hashed_password = hash_password(data['password'])
 
         # 디비 업데이트 실행코드
         try :
@@ -258,13 +248,10 @@ class UserEditNicknameResource(Resource):
             connection = get_connection()
 
             query = '''update user
-                        set password = %s,
-                        nickname = %s,
-                        gender = %s,
-                        age = %s
+                        set nickname = %s,
                         where id = %s;'''
 
-            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+            record = (data['nickname'], userId)
            
             cursor = connection.cursor(dictionary = True)
 
@@ -290,18 +277,11 @@ class UserEditNicknameResource(Resource):
 class UserEditAgeResource(Resource):
 
     @jwt_required()
-    def put(self, userId) :
+    def put(self) :
 
         # body에서 전달된 데이터를 처리
         data = request.get_json()
         userId = get_jwt_identity()
-
-        # 비밀번호 암호화
-        # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
-        if len(data['password']) < 4 or len(data['password'])>12:
-            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
-
-        hashed_password = hash_password(data['password'])
 
         # 디비 업데이트 실행코드
         try :
@@ -310,13 +290,10 @@ class UserEditAgeResource(Resource):
             connection = get_connection()
 
             query = '''update user
-                        set password = %s,
-                        nickname = %s,
-                        gender = %s,
-                        age = %s
+                        set age = %s
                         where id = %s;'''
 
-            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+            record = (data['age'], userId)
            
             cursor = connection.cursor(dictionary = True)
 
@@ -347,13 +324,6 @@ class UserEditGenderResource(Resource):
         data = request.get_json()
         userId = get_jwt_identity()
 
-        # 비밀번호 암호화
-        # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
-        if len(data['password']) < 4 or len(data['password'])>12:
-            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
-
-        hashed_password = hash_password(data['password'])
-
         # 디비 업데이트 실행코드
         try :
             # 데이터 업데이트 
@@ -361,13 +331,10 @@ class UserEditGenderResource(Resource):
             connection = get_connection()
 
             query = '''update user
-                        set password = %s,
-                        nickname = %s,
-                        gender = %s,
-                        age = %s
+                        set gender = %s
                         where id = %s;'''
 
-            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+            record = (data['gender'], userId)
            
             cursor = connection.cursor(dictionary = True)
 
