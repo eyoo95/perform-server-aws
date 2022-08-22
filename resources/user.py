@@ -318,7 +318,7 @@ class UserEditAgeResource(Resource):
 class UserEditGenderResource(Resource):
 
     @jwt_required()
-    def put(self, userId) :
+    def put(self) :
 
         # body에서 전달된 데이터를 처리
         data = request.get_json()
