@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 
+
 # JWT 토큰 라이브러리 만들기
 jwt = JWTManager(app)
 
