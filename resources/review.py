@@ -20,7 +20,7 @@ class ReviewSearchResource(Resource) :
                         select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, 
                         r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount
                         from review r
-                        join users u on r.userId = u.id
+                        join user u on r.userId = u.id
                         left join reviewRecommend rr on rr.reviewId = r.id
                         left join reviewCount rc on r.id = rc.reviewId
                         group by r.id having r.prfId = %s
@@ -59,7 +59,7 @@ class ReviewMyListResource(Resource) :
                         select u.id as userId, u.nickName, r.id as reviewId, r.prfName,
                         r.title, r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount
                         from review r
-                        join users u on r.userId = u.id
+                        join user u on r.userId = u.id
                         left join reviewRecommend rr on rr.reviewId = r.id
                         left join reviewCount rc on r.id = rc.reviewId
                         group by r.id having u.id = %s
@@ -96,7 +96,7 @@ class ReviewDetailResource(Resource) :
                         select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, 
                         r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount
                         from review r
-                        join users u on r.userId = u.id
+                        join user u on r.userId = u.id
                         left join reviewRecommend rr on rr.reviewId = r.id
                         left join reviewCount rc on r.id = rc.reviewId
                         group by r.id having r.id = %s;
