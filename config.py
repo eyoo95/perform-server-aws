@@ -5,3 +5,11 @@ class Config:
 
     # KOPIS eyoo1
     KOPIS_ACCESS_KEY = '03222d0200ec47f88b472204636f002b'
+    # 공연 조회
+    KOPIS_PERFORMANCE_SERARCH_URL = 'http://kopis.or.kr/openApi/restful/pblprfr'
+    # 공연 상세 조회
+    KOPIS_PERFORMANCE_DETAIL_URL = 'http://kopis.or.kr/openApi/restful/pblprfr/' # 공연 아이디 기재
+    # 공연 시설 조회
+    KOPIS_PERFORMANCE_PLACE_SERACH_URL = 'http://kopis.or.kr/openApi/restful/prfplc'
+    # 공연 시설 상세 조회
+    KOPIS_PERFORMANCE_PLACE_DETAIL_URL = 'http://kopis.or.kr/openApi/restful/prfplc/' # 공연 시설 아이디 기재
