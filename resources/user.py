@@ -358,6 +358,7 @@ class UserEditGenderResource(Resource):
 class UserValdationResource(Resource):
 
     # 비밀번호 확인하는 API
+    @jwt_required()
     def post(self):
         # 클라이언트로부터 body로 넘어온 데이터를 받는다.
         data = request.get_json()
