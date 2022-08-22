@@ -50,12 +50,8 @@ class PerformanceSearchResource(Resource):
 # 공연 상세 조회
 class PerformanceDetailResource(Resource):
     def get(self, prfId) :
-
-        print("prfid : ", prfId)
         # 파라미터에 들어갈 정보
-        params = {
-            "service" : Config.KOPIS_ACCESS_KEY,
-        }
+        params = { "service" : Config.KOPIS_ACCESS_KEY }
 
         # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
         response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + prfId, params = params)
