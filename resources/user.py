@@ -361,18 +361,15 @@ class UserValdationResource(Resource):
     def post(self):
         # 클라이언트로부터 body로 넘어온 데이터를 받는다.
         data = request.get_json()
+        userId = get_jwt_identity()
 
-        # {
-        #     "email": "abc@naver.com",
-        #     "password": "123456"
-        # }
         try:
             connection = get_connection()
             # 이메일로 DB의 데이터를 가져온다.
             query = '''select * from user
-                        where email = %s;'''
+                        where userId = %s;'''
 
-            record = (data['email'],  )
+            record = (userId,  )
 
             cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
 
@@ -399,16 +396,10 @@ class UserValdationResource(Resource):
             connection.close()
             return {"error":str(e)}, 503
 
-        # result_list의 행의갯수가 1개면 유저데이터를 받아온것이고 0 이면 등록되지 않은 회원
-        if len(result_list) != 1:
-            return {'error':'해당되는 이메일 정보가 없습니다.', 'error_no':6}, 400
-
         # 비밀번호가 맞는지 확인
         user_info = result_list[0]
         check = check_password(data['password'],user_info['password'])
         if check == False:
             return {'error':'비밀번호가 맞지 않습니다.', 'error_no':7}, 400
-
-        access_token = create_access_token(user_info['id'])
         
-        return {'result' : 'success' ,'accessToken':access_token} ,200
+        return {'result' : 'success'} ,200
