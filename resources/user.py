@@ -25,17 +25,54 @@ class UserRegisterResource(Resource):
         # 비밀번호 암호화
         # 비밀번호의 길이가 유효한지 체크한다. 4자리이상 12자리이상
         if len(data['password']) < 4 or len(data['password'])>12:
-            return{'error': '비밀번호 길이는 4자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
+            return{'error': '비밀번호 길이는 4자리 이상 18자리 이하이어야 합니다.', 'error_no':2}, 400
 
         hashed_password = hash_password(data['password'])
+
+        try:
+            connection = get_connection()
+            # 이메일로 DB의 데이터를
+            query = '''select * from user'''
+
+            cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
+
+            cursor.execute(query )
+
+            # select문은 아래 함수를 이용해서 데이터를 가져온다.
+            result_list = cursor.fetchall()
+            
+            # 중요! DB 에서 가져온 timestamp는 파이썬의 datetime으로 자동 변경된다.
+            # 문제는 이 데이터를 json.으로 바로 보낼수 없으므로 문자열로 바꿔서 다시 저장해서 보낸다.
+
+            i = 0
+            for record in result_list:
+                result_list[i]['createdAt'] = record['createdAt'].isoformat()
+                result_list[i]['updatedAt'] = record['updatedAt'].isoformat()
+                i = i + 1
+
+            cursor.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error":str(e)}, 503
+
+        # 닉네임 중복확인
+        if len(data['nickname']) < 2 or len(data['nickname'])>12:
+            return{'error': '닉네임의 길이는 2자리 이상 12자리 이하이어야 합니다.', 'error_no':2}, 400
+
+        i = 0
+        for record in result_list:
+            if result_list[i]['nickname'] == data['nickname']:
+                return {'error': '중복된 닉네임이 있습니다.', 'error_no':8}, 400
+            i = i + 1
+
+
 
         # 데이터베이스에 회원정보를 저장한다.
 
         try :
-
-            # 데이터 insert 
-            # 1. DB에 연결
-            connection = get_connection()
 
             # 2. 쿼리문 만들기
             query = '''insert into user
