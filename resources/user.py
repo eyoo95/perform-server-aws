@@ -1,4 +1,3 @@
-import resource
 from flask import request
 from flask_jwt_extended import create_access_token, get_jwt, jwt_required, get_jwt_identity
 from flask_restful import Resource
@@ -407,7 +406,7 @@ class UserValdationResource(Resource):
         return {'result' : 'success'} ,200
 
 # 회원정보 받는 클래스
-class UserInfoResource(resource):
+class UserInfoResource(Resource):
     @jwt_required()
     def get(self) :
         try :
