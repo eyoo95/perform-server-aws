@@ -423,6 +423,7 @@ class UserInfoResource(Resource):
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
             resultList = cursor.fetchall()
+            userInfo = resultList[0]
             cursor.close()
             connection.close()
 
@@ -432,4 +433,4 @@ class UserInfoResource(Resource):
             connection.close()
             return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
 
-        return { "resultList" : resultList }, 200
+        return { "userInfo" : userInfo }, 200
