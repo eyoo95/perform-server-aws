@@ -415,7 +415,7 @@ class UserInfoResource(resource):
             userId = get_jwt_identity()
 
             query = '''
-                        select *
+                        select email, nickname, age, gender
                         from user
                         where id = %s;
                     '''
