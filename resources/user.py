@@ -1,3 +1,4 @@
+import resource
 from flask import request
 from flask_jwt_extended import create_access_token, get_jwt, jwt_required, get_jwt_identity
 from flask_restful import Resource
@@ -404,3 +405,32 @@ class UserValdationResource(Resource):
             return {'error':'비밀번호가 일치하지 않습니다.', 'error_no':7}, 400
         
         return {'result' : 'success'} ,200
+
+# 회원정보 받는 클래스
+class UserInfoResource(resource):
+    @jwt_required()
+    def get(self) :
+        try :
+            connection = get_connection()
+            userId = get_jwt_identity()
+
+            query = '''
+                        select *
+                        from user
+                        where id = %s;
+                    '''
+
+            record = ( userId,)
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            resultList = cursor.fetchall()
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "resultList" : resultList }, 200

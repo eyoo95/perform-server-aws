@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from config import Config
 from flask_restful import Api
 from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource
-from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource
+from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
 
@@ -46,6 +46,8 @@ api.add_resource(UserEditNicknameResource, '/user/editnickname')
 api.add_resource(UserEditAgeResource, '/user/editage')
 # 회원 성별 수정
 api.add_resource(UserEditGenderResource, '/user/editgender')
+# 회원 정보 확인
+api.add_resource(UserInfoResource, '/user')
 
 # 해당 작품 리뷰 보기
 api.add_resource(ReviewSearchResource, '/review/<prfId>')
