@@ -42,6 +42,7 @@ class PostingResource(Resource) :
                         left join postingCount pc on pc.postingId = p.id
                         left join postingRecommend pr on pr.postingId = p.id
                         group by p.id
+                        order by createdAt desc
                         limit ''' + limit + ''' offset ''' + offset + ''';
                     '''
             cursor = connection.cursor(dictionary=True)
