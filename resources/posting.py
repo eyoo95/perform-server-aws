@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 import mysql.connector
 from mysql_connection import get_connection
 
-# 포스팅 작성
+# 게시물 작성
 class PostingResource(Resource) :
     @jwt_required()
     def post(self) :
@@ -63,7 +63,7 @@ class PostingResource(Resource) :
 
         return { "resultList" : resultList }, 200
 
-# 포스팅 수정
+# 게시물 수정
 class PostingSpecificResource(Resource) :
     @jwt_required()
     def put(self, postingId) :
@@ -99,7 +99,7 @@ class PostingSpecificResource(Resource) :
 
         return {"result" : "success"}, 200
 
-    # 포스팅 삭제
+    # 게시물 삭제
     @jwt_required()
     def delete(self, postingId) :
         try :
@@ -133,7 +133,7 @@ class PostingSpecificResource(Resource) :
 
         return {"result" : "success"}, 200
 
-    # 포스팅 하나 보기 (댓글 추가 필요 혹은 따로 추가)
+    # 게시물 상세보기 (댓글 추가 필요 혹은 따로 추가)
     def get(self, postingId) :
         try :
             connection = get_connection()
@@ -167,7 +167,7 @@ class PostingSpecificResource(Resource) :
 
 
 
-# 포스팅 추천
+# 게시물 추천
 class PostingRecommendResource(Resource) :
     @jwt_required()
     def post(self, postingId) :
@@ -191,7 +191,7 @@ class PostingRecommendResource(Resource) :
 
         return{ "result" : "success" }, 200
     
-    # 포스팅 추천 취소
+    # 게시물 추천 취소
     @jwt_required()
     def delete(self, postingId) :
         try :
@@ -215,7 +215,7 @@ class PostingRecommendResource(Resource) :
         return{ "result" : "success" }, 200
 
 
-# 내 포스팅 조회
+# 내 게시물 조회
 class PostingMyPostingResource(Resource) :
     @jwt_required()
     def get(self) :
