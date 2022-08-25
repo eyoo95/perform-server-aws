@@ -43,9 +43,16 @@ class PerformanceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))
+        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
 
-        return { "resultList" : resultList['dbs']['db'] }, 200
+        if len(resultList) == 9:
+            extra_list = []
+            extra_list.append(resultList)
+            resultList = extra_list
+            print(len(resultList))
+
+
+        return { "resultList" : resultList }, 200
 
 # 공연 상세 조회
 class PerformanceDetailResource(Resource):
@@ -60,9 +67,10 @@ class PerformanceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))
+        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
 
-        return { "resultList" : resultList['dbs']['db'] }, 200
+
+        return { "resultList" : resultList }, 200
 
 # 공연 시설 조회
 class PerformancePlaceSearchResource(Resource):
@@ -92,9 +100,15 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))
+        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
 
-        return { "resultList" : resultList['dbs']['db'] }, 200
+        if len(resultList) == 7:
+            extra_list = []
+            extra_list.append(resultList)
+            resultList = extra_list
+            print(len(resultList))
+
+        return { "resultList" : resultList }, 200
 
 # 공연 시설 상세 조회
 class PerformancePlaceDetailResource(Resource):
@@ -111,6 +125,8 @@ class PerformancePlaceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))
+        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
 
-        return { "resultList" : resultList['dbs']['db'] }, 200
+        print(len(resultList))
+
+        return { "resultList" : resultList }, 200
