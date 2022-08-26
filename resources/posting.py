@@ -66,12 +66,16 @@ class PostingResource(Resource) :
         return { "resultList" : resultList }, 200
 
 class PostingRecommenDescResource(Resource) :
-    # 추천 상위 게시글
+    # 게시글 정렬 내림차순(큰 값부터)
     def get(self) :
+
+        limit = request.args.get('limit')
+        offset = request.args.get('offset')
+        order = request.args['order']
+
         try :
             connection = get_connection()
-            limit = request.args.get('limit')
-            offset = request.args.get('offset')
+            
             query = '''
                         select u.nickname, p.*, ifnull(pc.viewCount,0) as viewCount, count(pr.postingId) as recommend
                         from posting p
@@ -79,17 +83,21 @@ class PostingRecommenDescResource(Resource) :
                         left join postingCount pc on pc.postingId = p.id
                         left join postingRecommend pr on pr.postingId = p.id
                         group by p.id
-                        order by recommend desc
+                        order by ''' + order + ''' desc
                         limit ''' + limit + ''' offset ''' + offset + ''';
                     '''
             cursor = connection.cursor(dictionary=True)
+
             cursor.execute(query)
+
             resultList = cursor.fetchall()
+
             i = 0
             for record in resultList :
                 resultList[i]['createdAt'] = record['createdAt'].isoformat()
                 resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
                 i += 1
+
             cursor.close()
             connection.close()
 
@@ -97,6 +105,7 @@ class PostingRecommenDescResource(Resource) :
             print(e)
             cursor.close()
             connection.close()
+            
             return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
 
         return { "resultList" : resultList }, 200
