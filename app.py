@@ -5,14 +5,13 @@ from flask_restful import Api
 from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
-from resources.posting import PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
+from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
 
 app = Flask(__name__)
 # 브렌치 테스트
 
 # 환경변수 세팅
 app.config.from_object(Config)
-
 
 # JWT 토큰 라이브러리 만들기
 jwt = JWTManager(app)
@@ -22,7 +21,6 @@ jwt = JWTManager(app)
 def check_if_token_is_revoke(jwt_header, jwt_payload):
     jti = jwt_payload['jti']
     return jti in jwt_blacklist
-
 
 api = Api(app)
 
@@ -83,6 +81,9 @@ api.add_resource(PostingSpecificResource, '/posting/<int:postingId>')
 api.add_resource(PostingRecommendResource, '/posting/recommend/<int:postingId>')
 # 내 포스팅 조회 
 api.add_resource(PostingMyPostingResource, '/posting/myposting')
+# 추천 상위 게시글
+api.add_resource(PostingRecommenDescResource, '/posting/lists')
+
 
 
 if __name__ == '__main__' :

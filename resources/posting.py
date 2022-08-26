@@ -4,8 +4,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 import mysql.connector
 from mysql_connection import get_connection
 
-# 게시물 작성
 class PostingResource(Resource) :
+
+    # 게시물 작성
     @jwt_required()
     def post(self) :
         data = request.get_json()
@@ -64,8 +65,44 @@ class PostingResource(Resource) :
 
         return { "resultList" : resultList }, 200
 
-# 게시물 수정
+class PostingRecommenDescResource(Resource) :
+    # 추천 상위 게시글
+    def get(self) :
+        try :
+            connection = get_connection()
+            limit = request.args.get('limit')
+            offset = request.args.get('offset')
+            query = '''
+                        select u.nickname, p.*, ifnull(pc.viewCount,0) as viewCount, count(pr.postingId) as recommend
+                        from posting p
+                        join user u on u.id = p.userId
+                        left join postingCount pc on pc.postingId = p.id
+                        left join postingRecommend pr on pr.postingId = p.id
+                        group by p.id
+                        order by recommend desc
+                        limit ''' + limit + ''' offset ''' + offset + ''';
+                    '''
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query)
+            resultList = cursor.fetchall()
+            i = 0
+            for record in resultList :
+                resultList[i]['createdAt'] = record['createdAt'].isoformat()
+                resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
+                i += 1
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "resultList" : resultList }, 200
+
 class PostingSpecificResource(Resource) :
+    # 게시물 수정
     @jwt_required()
     def put(self, postingId) :
         data = request.get_json()
