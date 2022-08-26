@@ -81,7 +81,7 @@ api.add_resource(PostingSpecificResource, '/posting/<int:postingId>')
 api.add_resource(PostingRecommendResource, '/posting/recommend/<int:postingId>')
 # 내 포스팅 조회 
 api.add_resource(PostingMyPostingResource, '/posting/myposting')
-# 추천 상위 게시글
+# 게시글 정렬 내림차순 (큰 값부터)
 api.add_resource(PostingRecommenDescResource, '/posting/lists')
 
 
