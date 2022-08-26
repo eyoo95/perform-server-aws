@@ -49,7 +49,6 @@ class PerformanceSearchResource(Resource):
             extra_list = []
             extra_list.append(resultList)
             resultList = extra_list
-            print(len(resultList))
 
 
         return { "resultList" : resultList }, 200
@@ -106,7 +105,6 @@ class PerformancePlaceSearchResource(Resource):
             extra_list = []
             extra_list.append(resultList)
             resultList = extra_list
-            print(len(resultList))
 
         return { "resultList" : resultList }, 200
 
