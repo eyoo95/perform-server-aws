@@ -49,7 +49,13 @@ class PerformanceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
+
+        if res is None :
+            return { "result" : "현재 진행중인 공연이 없습니다."}
+        resultList = res['db']
+
 
         if len(resultList) == 9:
             extra_list = []
@@ -170,7 +176,12 @@ class PerformanceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
+
+        if res is None :
+            return { "result" : "현재 진행중인 공연이 없습니다."}
+        resultList = res['db']
 
 
         return { "resultList" : resultList }, 200
@@ -187,7 +198,11 @@ class PerformanceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
+
+        if res is None :
+            return { "result" : "현재 진행중인 공연이 없습니다."}
+        resultList = res['db']
 
         mt20id = resultList['mt20id']
         prfnm = resultList['prfnm']
@@ -209,6 +224,7 @@ class PerformanceDetailResource(Resource):
         dtguidance = resultList['dtguidance']
 
         connection = get_connection()
+
 
         try :
             query = '''insert into prf
@@ -288,7 +304,13 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
+
+        if res is None :
+            return { "result" : "현재 진행중인 공연이 없습니다."}
+        resultList = res['db']
+
 
         # 파라미터에 들어갈 정보 변경
         params = {
@@ -372,104 +394,70 @@ class PerformancePlaceDetailResource(Resource):
 
 
 
-# 내 주변 공연 조회
+
+# 내 지역(구) 공연 시설 조회
 class NearByPerformanceResource(Resource) :
-    def get(self, sidoCode, lat, lng) :
-        # 내 지역 공연 조회
+    def get(self, sidoCodeSub) :
+
         # 필수 파라미터
         stdate = request.args['stdate'] # 공연시작일자, 6자로 입력받기 ex) 20220701
         eddate = request.args['eddate'] # 공연종료일자, 6자로 입력받기 ex) 20220801
         cpage = request.args['cpage'] # 현재 페이지, 정수형으로 입력
         rows = request.args['rows'] # 페이지당 목록 수, 정수형으로 입력
         prfstate = request.args['prfstate'] # 공연 상태 코드
-        signgucode = sidoCode # 지역(시도) 코드
-        latitude = lat # 내 위치 위도
-        longitude = lng # 내 위치 경도
 
-        params = {  "service" : Config.KOPIS_ACCESS_KEY,
-                    "stdate" : stdate,
-                    "eddate" : eddate,
-                    "cpage" : cpage,
-                    "rows" : rows,
-                    "signgucode" : signgucode,
-                    "prfstate" : prfstate }
+        signgucodesub = sidoCodeSub # 지역(시도) 코드
+
+        # 내 지역 공연 조회 파라미터
+        performanceSearchParams = { "service" : Config.KOPIS_ACCESS_KEY,
+                                    "stdate" : stdate,
+                                    "eddate" : eddate,
+                                    "cpage" : cpage,
+                                    "rows" : rows,
+                                    "signgucodesub" : signgucodesub,
+                                    "prfstate" : prfstate }
+
         # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-        response = requests.get(Config.KOPIS_PERFORMANCE_SERARCH_URL, params=params)
+        response = requests.get(Config.KOPIS_PERFORMANCE_SERARCH_URL, params=performanceSearchParams)
         # json 형태로 변환
         xmlToJsonConverter = xmltodict.parse(response.text)
         # json 타입으로 변경
-        res = json.loads(json.dumps(xmlToJsonConverter))
-        if res['dbs'] is None :
-            return {"resultList" : "현재 진행중인 공연이 없습니다."}
-        resultList = res['dbs']['db']
-        
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
-        if len(resultList) == 9:
+        if res is None :
+            return { "result" : "현재 진행중인 공연이 없습니다."}
+        performanceList = res['db']
+
+        if len(performanceList) == 9:
             extra_list = []
-            extra_list.append(resultList)
-            resultList = extra_list
+            extra_list.append(performanceList)
+            performanceList = extra_list
+        print(performanceList[0]['mt20id'])
 
-
-        # 공연 상세 조회
         # 공연과 시설의 정보 저장
+        # 공연 상세 조회 파라미터
+        params = { "service" : Config.KOPIS_ACCESS_KEY }
         try : 
-            performanceList = []
-            for i in range(len(resultList)) :
-            # 파라미터에 들어갈 정보
-                params = { "service" : Config.KOPIS_ACCESS_KEY }
-                # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-                response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + resultList[i]['mt20id'], params = params)
-                # json 형태로 변환
-                xmlToJsonConverter = xmltodict.parse(response.text)
-                # json 타입으로 변경
-                res = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
-                performanceList.append([ res['mt20id'], res['prfnm'], res['mt10id'], res['fcltynm'] ])
-        except Exception as e :
-            print(e)
-        #print("placeList : ", performanceList)
-
-
-        # 공연 시설 상세 조회
-        # 공연 시설의 경도 위도를 저장
-        performanceDetailList = []
-        try :
+            resultList = []
             for i in range(len(performanceList)) :
-                # 파라미터에 들어갈 정보
-                params = { "service" : Config.KOPIS_ACCESS_KEY }
-                # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-                response = requests.get(Config.KOPIS_PERFORMANCE_PLACE_DETAIL_URL + performanceList[i][2], params = params)
-                # json 형태로 변환
-                xmlToJsonConverter = xmltodict.parse(response.text)
-                # json 타입으로 변경
-                res = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
-                performanceDetailList.append([ performanceList[i], res['la'], res['lo'] ])
-        except Exception as e :
-            print(e)
-        #print("performanceDetailList : ", performanceDetailList)
 
+                # 공연 상세 검색 정보 저장
+                performanceDetailResponse = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + performanceList[i]['mt20id'], params = params)
+                xmlToJsonConverter1 = xmltodict.parse(performanceDetailResponse.text)
+                res1 = json.loads(json.dumps(xmlToJsonConverter1))['dbs']['db']
 
-        # 구글맵 API 주위 건물 검색
-        # 내 주위 5km에 상영중인 시설 위치 찾기
-        nearByPlaceList = []
-        try :
-            for i in range(len(performanceDetailList)) :
-                # 파라미터에 들어갈 정보
-                params = {  "key" : Config.GOOGLE_API_KEY,
-                            "language" : "ko",
-                            "radius" : 5000,
-                            "keyword" : performanceDetailList[i][1] + ", " + performanceDetailList[i][2],
-                            "location" : latitude+", "+longitude }
-                # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-                res = requests.get(Config.GOOGLE_MAP_NEAR_BY_SEARCH_URL, params = params)
-                res = res.json()
-                # 5km 이내의 상영중인 시설만 리스트에 저장
-                if res['status'] != "ZERO_RESULTS" :
-                        print("place nearby")
-                        nearByPlaceList.append(performanceDetailList[i])
+                placeResponse = requests.get(Config.KOPIS_PERFORMANCE_PLACE_DETAIL_URL + res1['mt10id'], params = params)
+                xmlToJsonConverter2 = xmltodict.parse(placeResponse.text)
+                res2 = json.loads(json.dumps(xmlToJsonConverter2))['dbs']['db']
+
+                resultList.append([ res1, res2 ])
+
         except Exception as e :
             print(e)
 
-        return { "count" : len(nearByPlaceList), "resultList" : nearByPlaceList }, 200
+        return { "count" : len(resultList), "resultList" : resultList }, 200
+
+
 
 
 
