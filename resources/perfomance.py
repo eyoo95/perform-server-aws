@@ -100,7 +100,7 @@ class PerformanceSearchResource(Resource):
 
 #         # 파라미터에 들어갈 정보
 #         params = { "service" : Config.KOPIS_ACCESS_KEY }
-
+        
 #         prfIdList = []
 #         for i in range(len(resultList)):
 #             prfIdList.append(resultList[i]['mt10id'])
@@ -296,9 +296,11 @@ class PerformancePlaceSearchResource(Resource):
         }
 
         plcIdList = []
+        i = 0
         for i in range(len(resultList)):
             plcIdList.append(resultList[i]['mt10id'])
-
+        
+        i = 0
         for i in plcIdList:
 
             # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
@@ -414,6 +416,8 @@ class NearByPerformanceResource(Resource) :
         # 공연과 시설의 정보 저장
         try : 
             performanceList = []
+
+            i = 0
             for i in range(len(resultList)) :
             # 파라미터에 들어갈 정보
                 params = { "service" : Config.KOPIS_ACCESS_KEY }
@@ -433,6 +437,7 @@ class NearByPerformanceResource(Resource) :
         # 공연 시설의 경도 위도를 저장
         performanceDetailList = []
         try :
+            i = 0
             for i in range(len(performanceList)) :
                 # 파라미터에 들어갈 정보
                 params = { "service" : Config.KOPIS_ACCESS_KEY }
@@ -452,6 +457,7 @@ class NearByPerformanceResource(Resource) :
         # 내 주위 5km에 상영중인 시설 위치 찾기
         nearByPlaceList = []
         try :
+            i = 0
             for i in range(len(performanceDetailList)) :
                 # 파라미터에 들어갈 정보
                 params = {  "key" : Config.GOOGLE_API_KEY,
@@ -503,7 +509,7 @@ class PerformanceLikeResource(Resource) :
         try :
             connection = get_connection()
             userId = get_jwt_identity()
-            query = '''delete from prfLike where userId = %s and prfId = "%s";'''
+            query = '''delete from prfLike where userId = %s and prfId = %s;'''
             record = (userId, prfId)
             cursor = connection.cursor()
             cursor.execute(query, record)
