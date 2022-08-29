@@ -201,6 +201,13 @@ class PostingSpecificResource(Resource) :
                 resultList[i]['createdAt'] = record['createdAt'].isoformat()
                 resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
                 i += 1
+
+            # 조회수 증가
+            query = '''update postingCount set viewCount = viewCount+1 where postingId = %s;'''
+            record = (postingId, )
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
             cursor.close()
             connection.close()
 
