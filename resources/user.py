@@ -182,12 +182,11 @@ class UserWithdrawalResource(Resource):
 
         return {'result': 'success'} , 200
 
-# 회원정보 수정하는 클래스
-class UsereditResource(Resource):
-
+# 회원 비밀번호 수정하는 클래스
+class UserEditPasswordResource(Resource):
 
     @jwt_required()
-    def put(self, userId) :
+    def put(self) :
 
         # body에서 전달된 데이터를 처리
         data = request.get_json()
@@ -207,13 +206,10 @@ class UsereditResource(Resource):
             connection = get_connection()
 
             query = '''update user
-                        set password = %s,
-                        nickname = %s,
-                        gender = %s,
-                        age = %s
+                        set password = %s
                         where id = %s;'''
 
-            record = (hashed_password,data['nickname'],data['gender'],data['age'], userId)
+            record = (hashed_password, userId)
            
             cursor = connection.cursor(dictionary = True)
 
@@ -235,8 +231,206 @@ class UsereditResource(Resource):
         return {'result' :'success'}, 200
 
 
+# 회원 닉네임 수정하는 클래스
+class UserEditNicknameResource(Resource):
+
+    @jwt_required()
+    def put(self) :
+
+        # body에서 전달된 데이터를 처리
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        # 디비 업데이트 실행코드
+        try :
+            # 데이터 업데이트 
+            # 1. DB에 연결
+            connection = get_connection()
+
+            query = '''update user
+                        set nickname = %s
+                        where id = %s;'''
+
+            record = (data['nickname'], userId)
+           
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # 5. 커넥션을 커밋해줘야 한다 => 디비에 영구적으로 반영하라는 뜻
+            connection.commit()
+
+            # 6. 자원 해제
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error' : str(e)}, 503
+
+        return {'result' :'success'}, 200        
+
+
+# 회원 나이 수정하는 클래스
+class UserEditAgeResource(Resource):
+
+    @jwt_required()
+    def put(self) :
+
+        # body에서 전달된 데이터를 처리
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        # 디비 업데이트 실행코드
+        try :
+            # 데이터 업데이트 
+            # 1. DB에 연결
+            connection = get_connection()
+
+            query = '''update user
+                        set age = %s
+                        where id = %s;'''
+
+            record = (data['age'], userId)
+           
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # 5. 커넥션을 커밋해줘야 한다 => 디비에 영구적으로 반영하라는 뜻
+            connection.commit()
+
+            # 6. 자원 해제
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error' : str(e)}, 503
+
+        return {'result' :'success'}, 200
+
+# 회원 성별 수정하는 클래스
+class UserEditGenderResource(Resource):
+
+    @jwt_required()
+    def put(self) :
+
+        # body에서 전달된 데이터를 처리
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        # 디비 업데이트 실행코드
+        try :
+            # 데이터 업데이트 
+            # 1. DB에 연결
+            connection = get_connection()
+
+            query = '''update user
+                        set gender = %s
+                        where id = %s;'''
+
+            record = (data['gender'], userId)
+           
+            cursor = connection.cursor(dictionary = True)
+
+            cursor.execute(query, record)
+
+            # 5. 커넥션을 커밋해줘야 한다 => 디비에 영구적으로 반영하라는 뜻
+            connection.commit()
+
+            # 6. 자원 해제
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error' : str(e)}, 503
+
+        return {'result' :'success'}, 200
+
+class UserValdationResource(Resource):
+
+    # 비밀번호 확인하는 API
+    @jwt_required()
+    def post(self):
+        # 클라이언트로부터 body로 넘어온 데이터를 받는다.
+        data = request.get_json()
+        userId = get_jwt_identity()
+
+        try:
+            connection = get_connection()
+            # 이메일로 DB의 데이터를 가져온다.
+            query = '''select * from user
+                        where id = %s;'''
+
+            record = (userId,  )
+
+            cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
+
+            cursor.execute(query, record )
+
+            # select문은 아래 함수를 이용해서 데이터를 가져온다.
+            result_list = cursor.fetchall()
+            
+            # 중요! DB 에서 가져온 timestamp는 파이썬의 datetime으로 자동 변경된다.
+            # 문제는 이 데이터를 json.으로 바로 보낼수 없으므로 문자열로 바꿔서 다시 저장해서 보낸다.
+
+            i = 0
+            for record in result_list:
+                result_list[i]['createdAt'] = record['createdAt'].isoformat()
+                result_list[i]['updatedAt'] = record['updatedAt'].isoformat()
+                i = i + 1
+
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error":str(e)}, 503
+
+        # 비밀번호가 맞는지 확인
+        user_info = result_list[0]
+        check = check_password(data['password'],user_info['password'])
+        if check == False:
+            return {'error':'비밀번호가 일치하지 않습니다.', 'error_no':7}, 400
         
+        return {'result' : 'success'} ,200
 
+# 회원정보 받는 클래스
+class UserInfoResource(Resource):
+    @jwt_required()
+    def get(self) :
+        try :
+            connection = get_connection()
+            userId = get_jwt_identity()
 
+            query = '''
+                        select email, nickname, age, gender
+                        from user
+                        where id = %s;
+                    '''
 
+            record = ( userId,)
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            resultList = cursor.fetchall()
+            userInfo = resultList[0]
+            cursor.close()
+            connection.close()
 
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "userInfo" : userInfo }, 200

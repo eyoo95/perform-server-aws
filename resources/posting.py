@@ -4,8 +4,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 import mysql.connector
 from mysql_connection import get_connection
 
-# 포스팅 작성
 class PostingResource(Resource) :
+
+    # 게시물 작성
     @jwt_required()
     def post(self) :
         data = request.get_json()
@@ -42,6 +43,7 @@ class PostingResource(Resource) :
                         left join postingCount pc on pc.postingId = p.id
                         left join postingRecommend pr on pr.postingId = p.id
                         group by p.id
+                        order by createdAt desc
                         limit ''' + limit + ''' offset ''' + offset + ''';
                     '''
             cursor = connection.cursor(dictionary=True)
@@ -63,8 +65,53 @@ class PostingResource(Resource) :
 
         return { "resultList" : resultList }, 200
 
-# 포스팅 수정
+class PostingRecommenDescResource(Resource) :
+    # 게시글 정렬 내림차순(큰 값부터)
+    def get(self) :
+
+        limit = request.args.get('limit')
+        offset = request.args.get('offset')
+        order = request.args['order']
+
+        try :
+            connection = get_connection()
+            
+            query = '''
+                        select u.nickname, p.*, ifnull(pc.viewCount,0) as viewCount, count(pr.postingId) as recommend
+                        from posting p
+                        join user u on u.id = p.userId
+                        left join postingCount pc on pc.postingId = p.id
+                        left join postingRecommend pr on pr.postingId = p.id
+                        group by p.id
+                        order by ''' + order + ''' desc
+                        limit ''' + limit + ''' offset ''' + offset + ''';
+                    '''
+            cursor = connection.cursor(dictionary=True)
+
+            cursor.execute(query)
+
+            resultList = cursor.fetchall()
+
+            i = 0
+            for record in resultList :
+                resultList[i]['createdAt'] = record['createdAt'].isoformat()
+                resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
+                i += 1
+
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "resultList" : resultList }, 200
+
 class PostingSpecificResource(Resource) :
+    # 게시물 수정
     @jwt_required()
     def put(self, postingId) :
         data = request.get_json()
@@ -99,7 +146,7 @@ class PostingSpecificResource(Resource) :
 
         return {"result" : "success"}, 200
 
-    # 포스팅 삭제
+    # 게시물 삭제
     @jwt_required()
     def delete(self, postingId) :
         try :
@@ -133,7 +180,7 @@ class PostingSpecificResource(Resource) :
 
         return {"result" : "success"}, 200
 
-    # 포스팅 하나 보기 (댓글 추가 필요 혹은 따로 추가)
+    # 게시물 상세보기 (댓글 추가 필요 혹은 따로 추가)
     def get(self, postingId) :
         try :
             connection = get_connection()
@@ -154,6 +201,13 @@ class PostingSpecificResource(Resource) :
                 resultList[i]['createdAt'] = record['createdAt'].isoformat()
                 resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
                 i += 1
+
+            # 조회수 증가
+            query = '''update postingCount set viewCount = viewCount+1 where postingId = %s;'''
+            record = (postingId, )
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
             cursor.close()
             connection.close()
 
@@ -167,7 +221,7 @@ class PostingSpecificResource(Resource) :
 
 
 
-# 포스팅 추천
+# 게시물 추천
 class PostingRecommendResource(Resource) :
     @jwt_required()
     def post(self, postingId) :
@@ -191,7 +245,7 @@ class PostingRecommendResource(Resource) :
 
         return{ "result" : "success" }, 200
     
-    # 포스팅 추천 취소
+    # 게시물 추천 취소
     @jwt_required()
     def delete(self, postingId) :
         try :
@@ -215,7 +269,7 @@ class PostingRecommendResource(Resource) :
         return{ "result" : "success" }, 200
 
 
-# 내 포스팅 조회
+# 내 게시물 조회
 class PostingMyPostingResource(Resource) :
     @jwt_required()
     def get(self) :
