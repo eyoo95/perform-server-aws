@@ -167,6 +167,7 @@ class PerformanceDetailDBResource(Resource):
 
     def get(self, prfId) :
         try :
+            userId = get_jwt_identity
             connection = get_connection()
             query = '''
                         select prf.*, count(pl.prfId) as likes
@@ -178,6 +179,13 @@ class PerformanceDetailDBResource(Resource):
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
             resultList = cursor.fetchall()
+            
+            # 조회수 증가
+            query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
+            record = (userId, prfId)
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
             cursor.close()
             connection.close()
 
