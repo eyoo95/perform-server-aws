@@ -169,7 +169,7 @@ class PerformanceDetailDBResource(Resource):
         try :
             connection = get_connection()
             query = '''
-                        select prf.*
+                        select prf.*, count(pl.prfId) as likes
                         from prf
                         left join prfLike pl on pl.prfId = prf.mt20id
                         where prf.mt20id = %s;
