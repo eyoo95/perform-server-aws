@@ -162,6 +162,33 @@ class PerformanceSearchResource(Resource):
 
 #         return { "result" : "success" }, 200
 
+# 공연 상세 조회 (DB)
+class PerformanceDetailDBResource(Resource):
+
+    def get(self, prfId) :
+        try :
+            connection = get_connection()
+            query = '''
+                        select prf.*
+                        from prf
+                        left join prfLike pl on pl.prfId = prf.mt20id
+                        where prf.mt20id = %s;
+                    '''
+            record = (prfId, )
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            resultList = cursor.fetchall()
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "resultList" : resultList }, 200
+
 # 공연 상세 조회
 class PerformanceDetailResource(Resource):
 
