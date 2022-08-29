@@ -74,8 +74,6 @@ api.add_resource(PerformancePlaceSearchResource, '/performanceplacesearch')
 api.add_resource(PerformancePlaceDetailResource, '/performanceplacedetail/<plcId>')
 # 내 주변 공연 조회
 api.add_resource(NearByPerformanceResource, '/nearbyperformance/<sidoCodeSub>')
-# 내 주변 공연 조회
-api.add_resource(NearByPerformanceResource, '/nearbyperformance/<sidoCode>/<lat>/<lng>')
 # 공연 좋아요, 좋아요 취소
 api.add_resource(PerformanceLikeResource, '/performance/like/<prfId>')
 
