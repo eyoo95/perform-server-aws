@@ -467,16 +467,19 @@ class NearByPerformanceResource(Resource) :
             extra_list = []
             extra_list.append(performanceList)
             performanceList = extra_list
-        print(performanceList[0]['mt20id'])
+        # print(performanceList[0]['mt20id'])
 
         # 공연과 시설의 정보 저장
         # 공연 상세 조회 파라미터
         params = { "service" : Config.KOPIS_ACCESS_KEY }
         try : 
             resultList = []
+            responseList = {}
+            responseConverter = []
+            tempList = []
             for i in range(len(performanceList)) :
 
-                # 공연 상세 검색 정보 저장
+                # 공연과 시설 정보 저장
                 performanceDetailResponse = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + performanceList[i]['mt20id'], params = params)
                 xmlToJsonConverter1 = xmltodict.parse(performanceDetailResponse.text)
                 res1 = json.loads(json.dumps(xmlToJsonConverter1))['dbs']['db']
@@ -485,13 +488,24 @@ class NearByPerformanceResource(Resource) :
                 xmlToJsonConverter2 = xmltodict.parse(placeResponse.text)
                 res2 = json.loads(json.dumps(xmlToJsonConverter2))['dbs']['db']
 
-                resultList.append([ res1, res2 ])
+                responseList['mt20id'] = res1['mt20id']
+                responseList['prfnm'] = res1['prfnm']
+                responseList['mt10id'] = res1['mt10id']
+                responseList['fcltynm'] = res2['fcltynm']
+                responseList['latitude'] = res2['la']
+                responseList['longitude'] = res2['lo']
+
+                responseConverter = list(responseList.values())
+
+                tempList = {string : responseConverter[i] for i,string in enumerate(responseList)}
+
+                resultList.append( tempList )
 
         except Exception as e :
             print(e)
 
+        #print(tempList)
         return { "count" : len(resultList), "resultList" : resultList }, 200
-
 
 
 
