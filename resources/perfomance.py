@@ -49,11 +49,13 @@ class PerformanceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
+
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
             return { "result" : "현재 진행중인 공연이 없습니다."}
         resultList = res['db']
+
 
         if len(resultList) == 9:
             extra_list = []
@@ -174,6 +176,7 @@ class PerformanceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
+
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
@@ -221,6 +224,7 @@ class PerformanceDetailResource(Resource):
         dtguidance = resultList['dtguidance']
 
         connection = get_connection()
+
 
         try :
             query = '''insert into prf
@@ -300,11 +304,13 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
+
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
             return { "result" : "현재 진행중인 공연이 없습니다."}
         resultList = res['db']
+
 
         # 파라미터에 들어갈 정보 변경
         params = {
@@ -388,15 +394,18 @@ class PerformancePlaceDetailResource(Resource):
 
 
 
+
 # 내 지역(구) 공연 시설 조회
 class NearByPerformanceResource(Resource) :
     def get(self, sidoCodeSub) :
+
         # 필수 파라미터
         stdate = request.args['stdate'] # 공연시작일자, 6자로 입력받기 ex) 20220701
         eddate = request.args['eddate'] # 공연종료일자, 6자로 입력받기 ex) 20220801
         cpage = request.args['cpage'] # 현재 페이지, 정수형으로 입력
         rows = request.args['rows'] # 페이지당 목록 수, 정수형으로 입력
         prfstate = request.args['prfstate'] # 공연 상태 코드
+
         signgucodesub = sidoCodeSub # 지역(시도) 코드
 
         # 내 지역 공연 조회 파라미터
@@ -447,6 +456,7 @@ class NearByPerformanceResource(Resource) :
             print(e)
 
         return { "count" : len(resultList), "resultList" : resultList }, 200
+
 
 
 
