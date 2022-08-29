@@ -369,7 +369,7 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
-# 공연 시설 상세 조회 jj
+# 공연 시설 상세 조회
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
