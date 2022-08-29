@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from config import Config
 from flask_restful import Api
-from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource
+from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource, NearByPerformanceResource
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
@@ -72,6 +72,8 @@ api.add_resource(PerformanceDetailResource, '/performancedetail/<prfId>')
 api.add_resource(PerformancePlaceSearchResource, '/performanceplacesearch')
 # 공연 시설 상세 조회
 api.add_resource(PerformancePlaceDetailResource, '/performanceplacedetail/<plcId>')
+# 내 주변 공연 조회
+api.add_resource(NearByPerformanceResource, '/nearbyperformance/<sidoCode>/<lat>/<lng>')
 
 # 포스팅 작성, 목록 조회
 api.add_resource(PostingResource, '/posting')

@@ -154,52 +154,6 @@
         }
       }
     },
-    "EnterpriseLogAccessIamRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "arn:aws:iam::802587217904:root"
-              },
-              "Action": "sts:AssumeRole",
-              "Condition": {
-                "StringEquals": {
-                  "sts:ExternalId": "ServerlessEnterprise-8a31466c-85ba-471f-ae1b-8be5217f922b"
-                }
-              }
-            }
-          ]
-        },
-        "Policies": [
-          {
-            "PolicyName": "LogFilterAccess",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "logs:FilterLogEvents"
-                  ],
-                  "Resource": [
-                    {
-                      "Fn::GetAtt": [
-                        "ApiLogGroup",
-                        "Arn"
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
     "ApiLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -207,9 +161,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/perform-server-aws/dev/1661486759494-2022-08-26T04:05:59.494Z/perform-server-aws.zip"
+          "S3Key": "serverless/perform-server-aws/dev/1661737937077-2022-08-29T01:52:17.077Z/perform-server-aws.zip"
         },
-        "Handler": "s_api.handler",
+        "Handler": "wsgi_handler.handler",
         "Runtime": "python3.8",
         "FunctionName": "perform-server-aws-dev-api",
         "MemorySize": 1024,
@@ -225,14 +179,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionkArqTqE3vt5HyodjSSImGwokmYm48T9vC0qEiImzV4": {
+    "ApiLambdaVersiondbEDJp1YP27dokyiIwT57KF8YvZw6pog9DzxfkT0s": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "zIFO1tZcopEYORbMjCRDS6cvwVmHU6CS0hIZxzJFFIw="
+        "CodeSha256": "vYnkaFFCGYRtwM9T7cRtNWAbh2Qrffqr9KfdpXh5pZQ="
       }
     },
     "HttpApi": {
@@ -240,12 +194,6 @@
       "Properties": {
         "Name": "dev-perform-server-aws",
         "ProtocolType": "HTTP"
-      }
-    },
-    "HttpApiLogGroup": {
-      "Type": "AWS::Logs::LogGroup",
-      "Properties": {
-        "LogGroupName": "/aws/http-api/perform-server-aws-dev"
       }
     },
     "HttpApiStage": {
@@ -258,18 +206,8 @@
         "AutoDeploy": true,
         "DefaultRouteSettings": {
           "DetailedMetricsEnabled": false
-        },
-        "AccessLogSettings": {
-          "DestinationArn": {
-            "Fn::GetAtt": [
-              "HttpApiLogGroup",
-              "Arn"
-            ]
-          },
-          "Format": "{\"requestTime\":\"$context.requestTime\",\"requestId\":\"$context.requestId\",\"apiId\":\"$context.apiId\",\"resourcePath\":\"$context.routeKey\",\"path\":\"$context.path\",\"httpMethod\":\"$context.httpMethod\",\"stage\":\"$context.stage\",\"status\":\"$context.status\",\"integrationStatus\":\"$context.integrationStatus\",\"integrationLatency\":\"$context.integrationLatency\",\"responseLatency\":\"$context.responseLatency\",\"responseLength\":\"$context.responseLength\",\"errorMessage\":\"$context.error.message\",\"format\":\"SLS_HTTP_API_LOG\",\"version\":\"1.0.0\"}"
         }
-      },
-      "DependsOn": "HttpApiLogGroup"
+      }
     },
     "ApiLambdaPermissionHttpApi": {
       "Type": "AWS::Lambda::Permission",
@@ -344,26 +282,6 @@
         }
       },
       "DependsOn": "HttpApiIntegrationApi"
-    },
-    "CWLSubFilterApiLogGroupUsEast1": {
-      "Type": "AWS::Logs::SubscriptionFilter",
-      "Properties": {
-        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:8a31466c-85ba-471f-ae1b-8be5217f922b#zVj5D6sJCqtn4FG15h#perform-server-aws#dev",
-        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
-        "LogGroupName": {
-          "Ref": "ApiLogGroup"
-        }
-      }
-    },
-    "CWLSubFilterHttpApiLogGroupUsEast1": {
-      "Type": "AWS::Logs::SubscriptionFilter",
-      "Properties": {
-        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:8a31466c-85ba-471f-ae1b-8be5217f922b#zVj5D6sJCqtn4FG15h#perform-server-aws#dev",
-        "FilterPattern": "\"SLS_HTTP_API_LOG\"",
-        "LogGroupName": {
-          "Ref": "HttpApiLogGroup"
-        }
-      }
     }
   },
   "Outputs": {
@@ -375,21 +293,10 @@
         "Name": "sls-perform-server-aws-dev-ServerlessDeploymentBucketName"
       }
     },
-    "EnterpriseLogAccessIamRole": {
-      "Value": {
-        "Fn::GetAtt": [
-          "EnterpriseLogAccessIamRole",
-          "Arn"
-        ]
-      },
-      "Export": {
-        "Name": "sls-perform-server-aws-dev-EnterpriseLogAccessIamRole"
-      }
-    },
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionkArqTqE3vt5HyodjSSImGwokmYm48T9vC0qEiImzV4"
+        "Ref": "ApiLambdaVersiondbEDJp1YP27dokyiIwT57KF8YvZw6pog9DzxfkT0s"
       },
       "Export": {
         "Name": "sls-perform-server-aws-dev-ApiLambdaFunctionQualifiedArn"
