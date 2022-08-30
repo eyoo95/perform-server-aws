@@ -183,7 +183,6 @@ class PerformanceDetailResource(Resource):
             return { "result" : "현재 진행중인 공연이 없습니다."}
         resultList = res['db']
 
-
         return { "result" : resultList }, 200
 
     # 상세정보 볼 때 DB에 공연 정보 저장
