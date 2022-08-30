@@ -170,9 +170,10 @@ class PerformanceDetailDBResource(Resource):
             userId = get_jwt_identity
             connection = get_connection()
             query = '''
-                        select prf.*, count(pl.prfId) as likes
-                        from prf
-                        left join prfLike pl on pl.prfId = prf.mt20id
+                        select prf.*, count(pl.prfId) as likes, sum(ifnull(pv.viewCount,0)) as viewCount 
+                        from prfViewCount pv
+                        join prfLike pl on pv.userId = pl.userId
+                        join prf on pv.prfId = prf.mt20id
                         where prf.mt20id = %s;
                     '''
             record = (prfId, )
