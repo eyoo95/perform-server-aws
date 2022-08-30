@@ -183,6 +183,7 @@ class PostingSpecificResource(Resource) :
     # 게시물 상세보기 (댓글 추가 필요 혹은 따로 추가)
     def get(self, postingId) :
         try :
+            userId = get_jwt_identity
             connection = get_connection()
             query = '''
                         select u.nickname, p.*, ifnull(pc.viewCount,0) as viewCount, count(pr.postingId) as recommend
@@ -203,8 +204,8 @@ class PostingSpecificResource(Resource) :
                 i += 1
 
             # 조회수 증가
-            query = '''update postingCount set viewCount = viewCount+1 where postingId = %s;'''
-            record = (postingId, )
+            query = '''insert into postingCount (userId, postingId) values (%s, %s);'''
+            record = (userId, postingId )
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
