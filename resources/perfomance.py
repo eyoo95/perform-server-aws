@@ -184,7 +184,7 @@ class PerformanceDetailResource(Resource):
         resultList = res['db']
 
 
-        return { "resultList" : resultList }, 200
+        return { "result" : resultList }, 200
 
     # 상세정보 볼 때 DB에 공연 정보 저장
     def post(self, prfId) :
@@ -369,7 +369,7 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
-# 공연 시설 상세 조회 jj
+# 공연 시설 상세 조회
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -390,7 +390,7 @@ class PerformancePlaceDetailResource(Resource):
         extra_list.append(resultList)
         resultList = extra_list
 
-        return { "resultList" : resultList }, 200
+        return { "result" : resultList }, 200
 
 
 
@@ -439,6 +439,7 @@ class NearByPerformanceResource(Resource) :
         params = { "service" : Config.KOPIS_ACCESS_KEY }
         try : 
             resultList = []
+            tempList = {}
             for i in range(len(performanceList)) :
 
                 # 공연 상세 검색 정보 저장
@@ -449,12 +450,20 @@ class NearByPerformanceResource(Resource) :
                 placeResponse = requests.get(Config.KOPIS_PERFORMANCE_PLACE_DETAIL_URL + res1['mt10id'], params = params)
                 xmlToJsonConverter2 = xmltodict.parse(placeResponse.text)
                 res2 = json.loads(json.dumps(xmlToJsonConverter2))['dbs']['db']
+                
+                tempList['prfId'] = res1['mt20id']
+                tempList['prfName'] = res1['prfnm']
+                tempList['placeId'] = res1['mt10id']
+                tempList['placeName'] = res2['fcltynm']
+                tempList['latitude'] = res2['la']
+                tempList['longitude'] = res2['lo']
 
-                resultList.append([ res1, res2 ])
+                resultList.append( [res1, res2] )
 
         except Exception as e :
             print(e)
 
+        #print(tempList)
         return { "count" : len(resultList), "resultList" : resultList }, 200
 
 
