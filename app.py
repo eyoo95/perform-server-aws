@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from config import Config
 from flask_restful import Api
-from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource, NearByPerformanceResource, PerformanceLikeResource, PerformanceDetailDBResource
+from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource, NearByPerformanceResource, PerformanceLikeResource
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
@@ -69,12 +69,12 @@ api.add_resource(PerformanceSearchResource, '/performancesearch')
 # 공연 상세 조회
 api.add_resource(PerformanceDetailResource, '/performancedetail/<prfId>')
 # 공연 상세 조회(DB)
-api.add_resource(PerformanceDetailDBResource, '/performancedetaildb/<prfId>')
+#api.add_resource(PerformanceDetailDBResource, '/performancedetaildb/<prfId>')
 # 공연 시설 조회
 api.add_resource(PerformancePlaceSearchResource, '/performanceplacesearch')
 # 공연 시설 상세 조회
 api.add_resource(PerformancePlaceDetailResource, '/performanceplacedetail/<plcId>')
-# 내 주변 공연 조회
+# 내 지역(구) 상영중인 공연 검색
 api.add_resource(NearByPerformanceResource, '/nearbyperformance/<sidoCodeSub>')
 # 공연 좋아요, 좋아요 취소
 api.add_resource(PerformanceLikeResource, '/performance/like/<prfId>')
