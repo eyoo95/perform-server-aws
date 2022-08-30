@@ -211,10 +211,9 @@ class PostingSpecificResource(Resource) :
                 cursor = connection.cursor()
                 cursor.execute(query, record)
                 connection.commit()
-                cursor.close()
 
-            except:
-                cursor.close()
+            except mysql.connector.Error as e :
+                print(e)
 
             # 조회수 증가
             query = '''update postingCount set viewCount = viewCount+1 where postingId = %s;'''
