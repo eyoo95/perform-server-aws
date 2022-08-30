@@ -49,11 +49,10 @@ class PerformanceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "resultList" : res }
         resultList = res['db']
 
 
@@ -162,57 +161,6 @@ class PerformanceSearchResource(Resource):
 
 #         return { "result" : "success" }, 200
 
-# 공연 상세 조회 (DB)
-class PerformanceDetailDBResource(Resource):
-
-    def get(self, prfId) :
-        try :
-            userId = get_jwt_identity
-            connection = get_connection()
-            query = '''
-                        select prf.*, count(pl.prfId) as likes
-                        from prf
-                        left join prfLike pl on pl.prfId = prf.mt20id
-                        where prf.mt20id = %s;
-                    '''
-            record = (prfId, )
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute(query, record)
-            resultList = cursor.fetchall()
-            
-            try:
-                # 조회수 생성
-                query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
-                record = (userId, prfId )
-                cursor = connection.cursor()
-                cursor.execute(query, record)
-                connection.commit()
-                cursor.close()
-                connection.close()
-
-            except:
-                cursor.close()
-                connection.close()
-
-            # 조회수 증가
-            query = '''update prfViewCount
-                        set viewCount = viewCount + 1 
-                        where prfId = %s AND userId = %s;;'''
-            record = (prfId, userId)
-            cursor = connection.cursor()
-            cursor.execute(query, record)
-            connection.commit()
-            cursor.close()
-            connection.close()
-
-        except mysql.connector.Error as e :
-            print(e)
-            cursor.close()
-            connection.close()
-            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
-
-        return { "resultList" : resultList }, 200
-
 # 공연 상세 조회
 class PerformanceDetailResource(Resource):
 
@@ -231,8 +179,9 @@ class PerformanceDetailResource(Resource):
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "result" : res }
         resultList = res['db']
+
 
         return { "result" : resultList }, 200
 
@@ -323,8 +272,11 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
+        if res is None :
+            return { "resultList" : res }
+        resultList = res['db']
 
         return { "resultList" : resultList }, 200
 
@@ -354,11 +306,10 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "result" : res }
         resultList = res['db']
 
 
@@ -380,8 +331,11 @@ class PerformancePlaceSearchResource(Resource):
             xmlToJsonConverter = xmltodict.parse(response.text)
 
             # json 타입으로 변경
-            resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+            res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
+            if res is None :
+                return { "result" : res }
+            resultList = res['db']
 
             fcltynm = resultList['fcltynm']
             mt10id = resultList['mt10id']
@@ -419,9 +373,7 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
-
-# 공연 시설 상세 조회
-
+# 공연 시설 상세 조회 
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -436,8 +388,12 @@ class PerformancePlaceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
+        if res is None :
+            return { "result" : res }
+        resultList = res['db']
+        
         return { "result" : resultList }, 200
 
 
@@ -473,7 +429,7 @@ class NearByPerformanceResource(Resource) :
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "result" : res }
         performanceList = res['db']
 
         if len(performanceList) == 9:
@@ -519,6 +475,7 @@ class NearByPerformanceResource(Resource) :
 
         #print(tempList)
         return { "count" : len(resultList), "resultList" : resultList }, 200
+
 
 
 
