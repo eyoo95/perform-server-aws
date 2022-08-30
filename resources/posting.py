@@ -191,7 +191,7 @@ class PostingSpecificResource(Resource) :
                         join user u on u.id = p.userId
                         left join postingCount pc on pc.postingId = p.id
                         left join postingRecommend pr on pr.postingId = p.id
-                        where p.id = %s;
+                        group by p.id having p.id = %s;
                     '''
             record = (postingId, )
             cursor = connection.cursor(dictionary=True)
@@ -202,15 +202,33 @@ class PostingSpecificResource(Resource) :
                 resultList[i]['createdAt'] = record['createdAt'].isoformat()
                 resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
                 i += 1
+            
+
+            try:
+                # 조회수 생성
+                query = '''insert into postingCount (userId, postingId) values (%s, %s);'''
+                record = (userId, postingId )
+                cursor = connection.cursor()
+                cursor.execute(query, record)
+                connection.commit()
+                cursor.close()
+                connection.close()
+
+            except:
+                cursor.close()
+                connection.close()
 
             # 조회수 증가
-            query = '''insert into postingCount (userId, postingId) values (%s, %s);'''
-            record = (userId, postingId )
+            query = '''update postingCount
+                        set viewCount = viewCount + 1 
+                        where postingId = %s AND userId = %s;;'''
+            record = (postingId, userId)
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
             cursor.close()
             connection.close()
+
 
         except mysql.connector.Error as e :
             print(e)

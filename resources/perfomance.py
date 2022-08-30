@@ -180,9 +180,25 @@ class PerformanceDetailDBResource(Resource):
             cursor.execute(query, record)
             resultList = cursor.fetchall()
             
+            try:
+                # 조회수 생성
+                query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
+                record = (userId, prfId )
+                cursor = connection.cursor()
+                cursor.execute(query, record)
+                connection.commit()
+                cursor.close()
+                connection.close()
+
+            except:
+                cursor.close()
+                connection.close()
+
             # 조회수 증가
-            query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
-            record = (userId, prfId)
+            query = '''update prfViewCount
+                        set viewCount = viewCount + 1 
+                        where prfId = %s AND userId = %s;;'''
+            record = (prfId, userId)
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
