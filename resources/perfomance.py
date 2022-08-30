@@ -164,6 +164,7 @@ class PerformanceSearchResource(Resource):
 
 # 공연 상세 조회 (DB)
 class PerformanceDetailDBResource(Resource):
+    @jwt_required()
     def get(self, prfId) :
         try :
             userId = get_jwt_identity
@@ -206,7 +207,7 @@ class PerformanceDetailDBResource(Resource):
             connection.close()
             return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
 
-        return { "resultList" : resultList }, 200
+        return { "result" : resultList }, 200
 
 # 공연 상세 조회
 class PerformanceDetailResource(Resource):
@@ -230,7 +231,7 @@ class PerformanceDetailResource(Resource):
         resultList = res['db']
 
 
-        return { "resultList" : resultList }, 200
+        return { "result" : resultList }, 200
 
     # 상세정보 볼 때 DB에 공연 정보 저장
     def post(self, prfId) :
