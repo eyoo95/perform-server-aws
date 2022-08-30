@@ -369,7 +369,7 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
-# 공연 시설 상세 조회
+# 공연 시설 상세 조회 
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -385,10 +385,6 @@ class PerformancePlaceDetailResource(Resource):
 
         # json 타입으로 변경
         resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
-
-        extra_list = []
-        extra_list.append(resultList)
-        resultList = extra_list
 
         return { "result" : resultList }, 200
 
@@ -432,17 +428,19 @@ class NearByPerformanceResource(Resource) :
             extra_list = []
             extra_list.append(performanceList)
             performanceList = extra_list
-        print(performanceList[0]['mt20id'])
+        # print(performanceList[0]['mt20id'])
 
         # 공연과 시설의 정보 저장
         # 공연 상세 조회 파라미터
         params = { "service" : Config.KOPIS_ACCESS_KEY }
         try : 
             resultList = []
-            tempList = {}
+            responseList = {}
+            responseConverter = []
+            tempList = []
             for i in range(len(performanceList)) :
 
-                # 공연 상세 검색 정보 저장
+                # 공연과 시설 정보 저장
                 performanceDetailResponse = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + performanceList[i]['mt20id'], params = params)
                 xmlToJsonConverter1 = xmltodict.parse(performanceDetailResponse.text)
                 res1 = json.loads(json.dumps(xmlToJsonConverter1))['dbs']['db']
@@ -450,15 +448,19 @@ class NearByPerformanceResource(Resource) :
                 placeResponse = requests.get(Config.KOPIS_PERFORMANCE_PLACE_DETAIL_URL + res1['mt10id'], params = params)
                 xmlToJsonConverter2 = xmltodict.parse(placeResponse.text)
                 res2 = json.loads(json.dumps(xmlToJsonConverter2))['dbs']['db']
-                
-                tempList['prfId'] = res1['mt20id']
-                tempList['prfName'] = res1['prfnm']
-                tempList['placeId'] = res1['mt10id']
-                tempList['placeName'] = res2['fcltynm']
-                tempList['latitude'] = res2['la']
-                tempList['longitude'] = res2['lo']
 
-                resultList.append( [res1, res2] )
+                responseList['mt20id'] = res1['mt20id']
+                responseList['prfnm'] = res1['prfnm']
+                responseList['mt10id'] = res1['mt10id']
+                responseList['fcltynm'] = res2['fcltynm']
+                responseList['latitude'] = res2['la']
+                responseList['longitude'] = res2['lo']
+
+                responseConverter = list(responseList.values())
+
+                tempList = {string : responseConverter[i] for i,string in enumerate(responseList)}
+
+                resultList.append( tempList )
 
         except Exception as e :
             print(e)
