@@ -164,7 +164,6 @@ class PerformanceSearchResource(Resource):
 
 # 공연 상세 조회 (DB)
 class PerformanceDetailDBResource(Resource):
-
     def get(self, prfId) :
         try :
             userId = get_jwt_identity
@@ -188,20 +187,17 @@ class PerformanceDetailDBResource(Resource):
                 cursor.execute(query, record)
                 connection.commit()
                 cursor.close()
-                connection.close()
 
             except:
                 cursor.close()
-                connection.close()
 
             # 조회수 증가
-            query = '''update prfViewCount
-                        set viewCount = viewCount + 1 
-                        where prfId = %s AND userId = %s;;'''
-            record = (prfId, userId)
+            query = '''update prfViewCount set viewCount = viewCount+1 where prfId = %s;'''
+            record = (prfId, )
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
+
             cursor.close()
             connection.close()
 
@@ -235,7 +231,7 @@ class PerformanceDetailResource(Resource):
         resultList = res['db']
 
 
-        return { "result" : resultList }, 200
+        return { "resultList" : resultList }, 200
 
     # 상세정보 볼 때 DB에 공연 정보 저장
     def post(self, prfId) :
@@ -420,9 +416,7 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
-
 # 공연 시설 상세 조회
-
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -439,7 +433,11 @@ class PerformancePlaceDetailResource(Resource):
         # json 타입으로 변경
         resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
 
-        return { "result" : resultList }, 200
+        extra_list = []
+        extra_list.append(resultList)
+        resultList = extra_list
+
+        return { "resultList" : resultList }, 200
 
 
 

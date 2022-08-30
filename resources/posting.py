@@ -212,20 +212,17 @@ class PostingSpecificResource(Resource) :
                 cursor.execute(query, record)
                 connection.commit()
                 cursor.close()
-                connection.close()
 
             except:
                 cursor.close()
-                connection.close()
 
             # 조회수 증가
-            query = '''update postingCount
-                        set viewCount = viewCount + 1 
-                        where postingId = %s AND userId = %s;;'''
-            record = (postingId, userId)
+            query = '''update postingCount set viewCount = viewCount+1 where postingId = %s;'''
+            record = (postingId, )
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
+
             cursor.close()
             connection.close()
 
