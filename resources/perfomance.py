@@ -49,11 +49,10 @@ class PerformanceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "resultList" : res }
         resultList = res['db']
 
 
@@ -162,6 +161,7 @@ class PerformanceSearchResource(Resource):
 
 #         return { "result" : "success" }, 200
 
+
 # get 데이터 호출
 # put  전체 데이터에서 특정 컬럼의 속성값만 변경
 # post 전체 데이터의 전체 컬럼의 데이터를 확인 후 변경
@@ -238,7 +238,7 @@ class PerformanceDetailResource(Resource):
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "result" : res }
         resultList = res['db']
 
 
@@ -331,8 +331,11 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
+        if res is None :
+            return { "resultList" : res }
+        resultList = res['db']
 
         return { "resultList" : resultList }, 200
 
@@ -362,11 +365,10 @@ class PerformancePlaceSearchResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "result" : res }
         resultList = res['db']
 
 
@@ -388,8 +390,11 @@ class PerformancePlaceSearchResource(Resource):
             xmlToJsonConverter = xmltodict.parse(response.text)
 
             # json 타입으로 변경
-            resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+            res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
+            if res is None :
+                return { "result" : res }
+            resultList = res['db']
 
             fcltynm = resultList['fcltynm']
             mt10id = resultList['mt10id']
@@ -427,7 +432,9 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
-# 공연 시설 상세 조회
+
+# 공연 시설 상세 조회 
+
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -442,13 +449,14 @@ class PerformancePlaceDetailResource(Resource):
         xmlToJsonConverter = xmltodict.parse(response.text)
 
         # json 타입으로 변경
-        resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
-        extra_list = []
-        extra_list.append(resultList)
-        resultList = extra_list
+        if res is None :
+            return { "result" : res }
+        resultList = res['db']
+        
+        return { "result" : resultList }, 200
 
-        return { "resultList" : resultList }, 200
 
 
 
@@ -483,7 +491,7 @@ class NearByPerformanceResource(Resource) :
         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
         if res is None :
-            return { "result" : "현재 진행중인 공연이 없습니다."}
+            return { "result" : res }
         performanceList = res['db']
 
         if len(performanceList) == 9:
@@ -529,6 +537,7 @@ class NearByPerformanceResource(Resource) :
 
         #print(tempList)
         return { "count" : len(resultList), "resultList" : resultList }, 200
+
 
 
 
