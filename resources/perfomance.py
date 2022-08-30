@@ -235,7 +235,7 @@ class PerformanceDetailResource(Resource):
         resultList = res['db']
 
 
-        return { "resultList" : resultList }, 200
+        return { "result" : resultList }, 200
 
     # 상세정보 볼 때 DB에 공연 정보 저장
     def post(self, prfId) :
@@ -420,7 +420,9 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
+
 # 공연 시설 상세 조회
+
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -437,11 +439,7 @@ class PerformancePlaceDetailResource(Resource):
         # json 타입으로 변경
         resultList = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
 
-        extra_list = []
-        extra_list.append(resultList)
-        resultList = extra_list
-
-        return { "resultList" : resultList }, 200
+        return { "result" : resultList }, 200
 
 
 
