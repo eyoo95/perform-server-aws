@@ -169,10 +169,9 @@ class PerformanceSearchResource(Resource):
 
 # 공연 상세 조회 (DB)
 class PerformanceDetailDBResource(Resource):
-    @jwt_required()
     def get(self, prfId) :
         try :
-            userId = get_jwt_identity
+            # userId = get_jwt_identity
             connection = get_connection()
             query = '''
                         select prf.*, count(pl.prfId) as likes, sum(ifnull(pv.viewCount,0)) as viewCount 
@@ -192,23 +191,23 @@ class PerformanceDetailDBResource(Resource):
                 resultList[i]['viewCount'] = int(record['viewCount'])
                 i += 1
             
-            try:
-                # 조회수 생성
-                query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
-                record = (userId, prfId )
-                cursor = connection.cursor()
-                cursor.execute(query, record)
-                connection.commit()
+            # try:
+            #     # 조회수 생성
+            #     query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
+            #     record = (userId, prfId )
+            #     cursor = connection.cursor()
+            #     cursor.execute(query, record)
+            #     connection.commit()
 
-            except mysql.connector.Error as e :
-                print(e)
+            # except mysql.connector.Error as e :
+            #     print(e)
 
-            # 조회수 증가
-            query = '''update prfViewCount set viewCount = viewCount+1 where prfId = %s;'''
-            record = (prfId, )
-            cursor = connection.cursor()
-            cursor.execute(query, record)
-            connection.commit()
+            # # 조회수 증가
+            # query = '''update prfViewCount set viewCount = viewCount+1 where prfId = %s;'''
+            # record = (prfId, )
+            # cursor = connection.cursor()
+            # cursor.execute(query, record)
+            # connection.commit()
 
             cursor.close()
             connection.close()
