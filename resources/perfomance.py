@@ -161,6 +161,66 @@ class PerformanceSearchResource(Resource):
 
 #         return { "result" : "success" }, 200
 
+
+# get 데이터 호출
+# put  전체 데이터에서 특정 컬럼의 속성값만 변경
+# post 전체 데이터의 전체 컬럼의 데이터를 확인 후 변경
+# delete 삭제
+
+# 공연 상세 조회 (DB)
+class PerformanceDetailDBResource(Resource):
+    @jwt_required()
+    def get(self, prfId) :
+        try :
+            userId = get_jwt_identity
+            connection = get_connection()
+            query = '''
+                        select prf.*, count(pl.prfId) as likes, sum(ifnull(pv.viewCount,0)) as viewCount 
+                        from prfViewCount pv
+                        left join prfLike pl on pv.userId = pl.userId
+                        left join prf on pv.prfId = prf.mt20id
+                        where prf.mt20id = %s;
+                    '''
+            record = (prfId, )
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            resultList = cursor.fetchall()
+
+            i = 0
+            for record in resultList :
+                resultList[i]['likes'] = int(record['likes'])
+                resultList[i]['viewCount'] = int(record['viewCount'])
+                i += 1
+            
+            try:
+                # 조회수 생성
+                query = '''insert into prfViewCount (userId, prfId) values (%s, %s);'''
+                record = (userId, prfId )
+                cursor = connection.cursor()
+                cursor.execute(query, record)
+                connection.commit()
+
+            except mysql.connector.Error as e :
+                print(e)
+
+            # 조회수 증가
+            query = '''update prfViewCount set viewCount = viewCount+1 where prfId = %s;'''
+            record = (prfId, )
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "result" : resultList }, 200
+
 # 공연 상세 조회
 class PerformanceDetailResource(Resource):
 
@@ -373,7 +433,9 @@ class PerformancePlaceSearchResource(Resource):
 
 
 
+
 # 공연 시설 상세 조회 
+
 class PerformancePlaceDetailResource(Resource):
     def get(self, plcId) :
         # 파라미터에 들어갈 정보
@@ -395,6 +457,7 @@ class PerformancePlaceDetailResource(Resource):
         resultList = res['db']
         
         return { "result" : resultList }, 200
+
 
 
 
