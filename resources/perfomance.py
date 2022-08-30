@@ -162,6 +162,11 @@ class PerformanceSearchResource(Resource):
 
 #         return { "result" : "success" }, 200
 
+# get 데이터 호출
+# put  전체 데이터에서 특정 컬럼의 속성값만 변경
+# post 전체 데이터의 전체 컬럼의 데이터를 확인 후 변경
+# delete 삭제
+
 # 공연 상세 조회 (DB)
 class PerformanceDetailDBResource(Resource):
     @jwt_required()
@@ -172,14 +177,20 @@ class PerformanceDetailDBResource(Resource):
             query = '''
                         select prf.*, count(pl.prfId) as likes, sum(ifnull(pv.viewCount,0)) as viewCount 
                         from prfViewCount pv
-                        join prfLike pl on pv.userId = pl.userId
-                        join prf on pv.prfId = prf.mt20id
+                        left join prfLike pl on pv.userId = pl.userId
+                        left join prf on pv.prfId = prf.mt20id
                         where prf.mt20id = %s;
                     '''
             record = (prfId, )
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
             resultList = cursor.fetchall()
+
+            i = 0
+            for record in resultList :
+                resultList[i]['likes'] = int(record['likes'])
+                resultList[i]['viewCount'] = int(record['viewCount'])
+                i += 1
             
             try:
                 # 조회수 생성
