@@ -1,5 +1,4 @@
 # OpenAPI 이용하려면 requests 라이브러리 이용
-from unittest import result
 import requests
 
 from flask import request
