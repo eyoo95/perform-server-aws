@@ -184,7 +184,7 @@ class PostingSpecificResource(Resource) :
     @jwt_required()
     def get(self, postingId) :
         try :
-            userId = get_jwt_identity
+            userId = get_jwt_identity()
             connection = get_connection()
             query = '''
                         select u.nickname, p.*, ifnull(pc.viewCount,0) as viewCount, count(pr.postingId) as recommend
@@ -202,37 +202,40 @@ class PostingSpecificResource(Resource) :
             for record in resultList :
                 resultList[i]['createdAt'] = record['createdAt'].isoformat()
                 resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
+                resultList[i]['viewCount'] = record['viewCount']+1
                 i += 1
 
+            # 조회수 확인
+            query = '''
+                        select userId
+                        from postingCount
+                        where postingId = '''+str(postingId)+''' and userId = '''+str(userId)+''';
+                    '''
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query)
+            resultList2 = cursor.fetchall()
 
-            # query = '''
-            #             select userId
-            #             from postingCount
-            #             where postingId = %s and userId = %s;
-            #         '''
-            # record = (postingId, userId)
-            # cursor = connection.cursor(dictionary=True)
-            # cursor.execute(query, record)
-            # resultList2 = cursor.fetchall()
+            if resultList2 == []:
+                try:
+                    # 조회수 생성
 
-            # if resultList2[0]['userId'] != userId:
-            #     try:
-            #         # 조회수 생성
-            #         query = '''insert into postingCount (userId, postingId) values (%s, %s);'''
-            #         record = (userId, postingId )
-            #         cursor = connection.cursor()
-            #         cursor.execute(query, record)
-            #         connection.commit()
+                    query = '''insert into postingCount (userId, postingId) values ('''+str(userId)+''', '''+str(postingId)+''');'''
+                    cursor = connection.cursor()
+                    cursor.execute(query)
+                    connection.commit()
+                    
 
-            #     except mysql.connector.Error as e :
-            #         print(e)
+                except mysql.connector.Error as e :
+                    print(e)
 
-            # # 조회수 증가
-            # query = '''update postingCount set viewCount = viewCount+1 where postingId = %s;'''
-            # record = (postingId, )
-            # cursor = connection.cursor()
-            # cursor.execute(query, record)
-            # connection.commit()
+            # 조회수 증가
+            query = '''update postingCount set viewCount = viewCount + 1 
+                        where postingId = '''+str(postingId)+'''
+                        and userId = '''+str(userId)+''';'''
+
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
 
             cursor.close()
             connection.close()
