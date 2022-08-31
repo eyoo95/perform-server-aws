@@ -1,19 +1,16 @@
 <!--
-title: 'Serverless Framework Python Flask API on AWS'
-description: 'This template demonstrates how to develop and deploy a simple Python Flask API running on AWS Lambda using the traditional Serverless Framework.'
+title: '공연조회 앱 서버 (뭐보러갈래)'
+description: '내 주변 공연을 조회할 수 있으며 공연 후기를 남겨 공유할 수 있습니다.'
 layout: Doc
 framework: v3
 platform: AWS
 language: Python
-priority: 2
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
+
 -->
 
-# Serverless Framework Python Flask API on AWS
+# API 명세서
 
-This template demonstrates how to develop and deploy a simple Python Flask API service running on AWS Lambda using the traditional Serverless Framework.
+https://documenter.getpostman.com/view/21511142/VUxNQng4
 
 
 ## Anatomy of the template
