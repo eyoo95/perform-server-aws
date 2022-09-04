@@ -5,7 +5,7 @@ email-validator
 flask-restful
 markupsafe==2.0.1
 mysql-connector-python
-numpy==1.23.2
+numpy==1.23.0
 pandas==1.4.4
 passlib
 psycopg2-binary
