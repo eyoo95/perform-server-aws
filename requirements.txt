@@ -11,4 +11,4 @@ Flask-JWT-Extended
 requests
 xmltodict
 pandas==1.4.4
-numpy==1.23.0
+numpy==1.19.1
