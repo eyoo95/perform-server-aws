@@ -10,3 +10,4 @@ email-validator
 Flask-JWT-Extended
 requests
 xmltodict
+pandas
