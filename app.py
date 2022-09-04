@@ -6,7 +6,7 @@ from resources.perfomance import PerformancePlaceDetailResource, PerformanceSear
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
-# from resources.recommend import myInterestingPerformanceTop3Resource
+from resources.recommend import myInterestingPerformanceTop3Resource
 
 app = Flask(__name__)
 # 브렌치 테스트
