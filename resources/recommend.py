@@ -1,3 +1,9 @@
+import requests
+from flask import request
+from flask_restful import Resource
+import xmltodict
+import json
+from config import Config
 import pandas as pd 
 from flask_restful import Resource
 from mysql.connector.errors import Error
@@ -156,3 +162,23 @@ class MovieRecomRealTimeRersource(Resource):
 
         return { "result" : "success",
                 "movie_list" : recommend_movie_list.iloc[0:20,].to_dict('records')} , 200
+
+class myInterestingPerformanceTop3Resource(Resource) :
+    def get(self, prfId1, prfId2, prfId3) :
+        # 파라미터에 들어갈 정보
+        params = { "service" : Config.KOPIS_ACCESS_KEY }
+
+        prfId = [ prfId1, prfId2, prfId3 ]
+        resultList = []
+
+        for i in prfId :
+            # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
+            response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + i, params = params)
+
+            # json 형태로 변환
+            xmlToJsonConverter = xmltodict.parse(response.text)
+            res = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
+
+            resultList.append(res)
+
+        return { "resultList" : resultList }, 200

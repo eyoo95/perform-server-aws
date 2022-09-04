@@ -6,6 +6,7 @@ from resources.perfomance import PerformancePlaceDetailResource, PerformanceSear
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
+from resources.recommend import myInterestingPerformanceTop3Resource
 
 app = Flask(__name__)
 # 브렌치 테스트
@@ -92,6 +93,10 @@ api.add_resource(PostingRecommendResource, '/posting/recommend/<int:postingId>')
 api.add_resource(PostingMyPostingResource, '/posting/myposting')
 # 게시글 정렬 내림차순 (큰 값부터)
 api.add_resource(PostingRecommenDescResource, '/posting/lists')
+
+# 내 취향 추천 탑 3 myInterestingPerformanceTop3Resource
+api.add_resource(myInterestingPerformanceTop3Resource, '/recommend/myinterest/<prfId1>/<prfId2>/<prfId3>')
+
 
 
 
