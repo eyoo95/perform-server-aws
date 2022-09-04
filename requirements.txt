@@ -11,3 +11,4 @@ Flask-JWT-Extended
 requests
 xmltodict
 pandas
+numpy
