@@ -10,5 +10,5 @@ email-validator
 Flask-JWT-Extended
 requests
 xmltodict
-pandas
-numpy
+pandas==1.4.4
+numpy==1.23.0

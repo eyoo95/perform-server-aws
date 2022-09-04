@@ -1,5 +1,4 @@
-org: eyoo95
-app: perform-server-aws
+console: true
 service: perform-server-aws
 
 frameworkVersion: '3'
@@ -11,6 +10,7 @@ custom:
 provider:
   name: aws
   runtime: python3.8
+  region: ap-northeast-2
 
 functions:
   api:
