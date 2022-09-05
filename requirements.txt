@@ -7,7 +7,6 @@ Flask-JWT-Extended
 requests
 
 
-
 # 레이어 사용
 # mysql-connector-python psycopg2-binary passlib email-validator 
 # numpy, pandas

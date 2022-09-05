@@ -6,7 +6,7 @@ from resources.perfomance import PerformancePlaceDetailResource, PerformanceSear
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
-from resources.recommend import myInterestingPerformanceTop3Resource
+from resources.recommend import myInterestingPerformanceTop3Resource, PerformaceRecomRealTimeRersource
 
 app = Flask(__name__)
 # 브렌치 테스트
@@ -66,15 +66,15 @@ api.add_resource(ReviewRecommendResource, '/review/recommend/<int:reviewId>')
 api.add_resource(ReviewRecommendCancelResource, '/review/recommend/<int:reviewId>')
 
 # 공연 조회
-api.add_resource(PerformanceSearchResource, '/performancesearch')
+api.add_resource(PerformanceSearchResource, '/performance')
 # # 공연 상세 조회
 # api.add_resource(PerformanceDetailResource, '/performancedetail/<prfId>')
 # 공연 상세 조회(DB)
-api.add_resource(PerformanceDetailDBResource, '/performancedetaildb/<prfId>')
+api.add_resource(PerformanceDetailDBResource, '/performance/<prfId>')
 # 공연 시설 조회
-api.add_resource(PerformancePlaceSearchResource, '/performanceplacesearch')
+api.add_resource(PerformancePlaceSearchResource, '/performanceplace')
 # 공연 시설 상세 조회
-api.add_resource(PerformancePlaceDetailResource, '/performanceplacedetail/<plcId>')
+api.add_resource(PerformancePlaceDetailResource, '/performanceplace/<plcId>')
 # 내 지역(구) 상영중인 공연 검색
 api.add_resource(NearByPerformanceResource, '/nearbyperformance/<sidoCodeSub>')
 # 반경 내 공연 Map 표시
@@ -96,6 +96,11 @@ api.add_resource(PostingRecommenDescResource, '/posting/lists')
 
 # 내 취향 추천 탑 3 myInterestingPerformanceTop3Resource
 api.add_resource(myInterestingPerformanceTop3Resource, '/recommend/myinterest/<prfId1>/<prfId2>/<prfId3>')
+# 실시간 공연 개인화 추천 API
+api.add_resource(PerformaceRecomRealTimeRersource, '/performance/recommend')
+
+
+
 
 
 
