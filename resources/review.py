@@ -9,7 +9,7 @@ import xmltodict, json
 
 userId = 'null'
 
-# 해당 작품 리뷰 보기
+# 해당 작품 리뷰 보기 (조회)
 class ReviewSearchResource(Resource) :
     def get(self, prfId) :
         try :
@@ -18,8 +18,10 @@ class ReviewSearchResource(Resource) :
             offset = request.args.get('offset')
             query = '''
                         select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, 
-                        r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount
+                        r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount, rt.rating
                         from review r
+                        join prf on prf.mt20id = r.prfId
+                        join prfRating rt on rt.prfId = r.prfId
                         join user u on r.userId = u.id
                         left join reviewRecommend rr on rr.reviewId = r.id
                         left join reviewCount rc on r.id = rc.reviewId
@@ -46,7 +48,7 @@ class ReviewSearchResource(Resource) :
 
         return { "resultList" : resultList }, 200
 
-# 내 리뷰 보기
+# 내 리뷰 보기 (조회)
 class ReviewMyListResource(Resource) :
     @jwt_required()
     def get(self) :
@@ -57,8 +59,10 @@ class ReviewMyListResource(Resource) :
             offset = request.args.get('offset')
             query = '''
                         select u.id as userId, u.nickName, r.id as reviewId, r.prfName,
-                        r.title, r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount
+                        r.title, r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount, rt.rating
                         from review r
+                        join prf on prf.mt20id = r.prfId
+                        join prfRating rt on rt.prfId = r.prfId
                         join user u on r.userId = u.id
                         left join reviewRecommend rr on rr.reviewId = r.id
                         left join reviewCount rc on r.id = rc.reviewId
@@ -94,8 +98,10 @@ class ReviewDetailResource(Resource) :
             # 리뷰 상세 정보 출력
             query = '''
                         select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, 
-                        r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount
+                        r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount, rt.rating
                         from review r
+                        join prf on prf.mt20id = r.prfId
+                        join prfRating rt on rt.prfId = r.prfId
                         join user u on r.userId = u.id
                         left join reviewRecommend rr on rr.reviewId = r.id
                         left join reviewCount rc on r.id = rc.reviewId
@@ -157,6 +163,17 @@ class ReviewAddResource(Resource) :
             cursor.execute(query, record)
             connection.commit()
 
+            # 별점 추가 
+            query = '''insert into prfRating
+                        (userId, prfId, rating)
+                        values
+                        (%s, %s, %s);'''
+            record = (userId, prfId, data['rating'])
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+            
+
             # 작성한 리뷰 조회수 초기화를 위한 리뷰 ID 확인
             query = ''' select id from review where userId = %s order by id desc limit 1;'''
             record = (userId, )
@@ -203,12 +220,28 @@ class ReviewModifyResource(Resource) :
                 connection.close()
                 return { "error" : "수정할 수 없습니다."}
 
+            # prfID 확인
+            query = '''select prfId from review where id = %s;'''
+            record = (reviewId, )
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            resultList = cursor.fetchall()
+            prfId = resultList[0]['prfId']
+
+            # 수정
             query = '''update review set title = %s, content = %s where id = %s;'''
             record = (data['title'], data['content'], reviewId)
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
             cursor.close()
+            
+            # 별점 추가 
+            query = '''update prfRating set rating = %s where prfId = %s and userId = %s;'''
+            record = (data['rating'], prfId, userId)
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
             connection.close()
 
         except mysql.connector.Error as e :

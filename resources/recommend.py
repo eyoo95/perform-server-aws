@@ -11,9 +11,8 @@ from mysql_connection import get_connection
 from flask_jwt_extended import get_jwt_identity, jwt_required
 import mysql.connector
 
-
+# 실시간 영화 개인화 추천 API
 class PerformaceRecomRealTimeRersource(Resource):
-    # 실시간 영화 개인화 추천 API
     @jwt_required()
     def get(self) :
         # 클라이언트로부터 데이터를 받아온다.
@@ -25,9 +24,9 @@ class PerformaceRecomRealTimeRersource(Resource):
 
             ####
             query = '''select pr.userId, pr.prfId, pr.rating, prf.prfnm as title
-                            from prfRating pr
-                            join prf
-                            on prf.mt20id = pr.prfId;'''
+                        from prfRating pr
+                        join prf
+                        on prf.mt20id = pr.prfId;'''
 
 
             # select 문은 dictionary = True를 해준다.
@@ -38,9 +37,20 @@ class PerformaceRecomRealTimeRersource(Resource):
             # select문은 아래 함수를 이용해서 데이터를 가져온다.
             resultList = cursor.fetchall()
 
+            print(resultList)
+
             df = pd.DataFrame(data= resultList)
+
+            print(df)
+
+
             matrix = df.pivot_table(index='userId', columns='title',values='rating')
-            df = matrix.corr(min_periods=50)
+
+            print(matrix)
+
+            df = matrix.corr() # min_periods=50
+
+            print(df)
             #####
 
             query = '''select pr.userId, pr.prfId, prf.prfnm as title, pr.rating
@@ -70,6 +80,8 @@ class PerformaceRecomRealTimeRersource(Resource):
         # 가져온 유저 개인 rating 데이터를 데이터프레임으로 만든다.
         dfMyRating = pd.DataFrame(data = resultList)
 
+        print(dfMyRating)
+
         # 추천 영화를 저장할 빈 데이터 프레임을 만든다.
         similarPrfList = pd.DataFrame()
 
@@ -86,7 +98,7 @@ class PerformaceRecomRealTimeRersource(Resource):
         # 내가 이미 봐서 별점을 남긴 영화는 제외해야한다.
         similarPrfList = similarPrfList.reset_index()
 
-        # 내가이이미 본 영화제목만 가져온다.
+        # 내가 이미 본 영화제목만 가져온다.
         titleList = dfMyRating['title'].tolist()
 
         # similarPrfList에 내가 본영화인 titleList를 제외하고 가져온다.
