@@ -132,88 +132,88 @@ class PerformanceDetailDBResource(Resource):
 
         return { "resultList" : resultList }, 200
 
-# # 공연 상세 조회
-# class PerformanceDetailResource(Resource):
+# 공연 상세 조회
+class PerformanceDetailResource(Resource):
 
-#     def get(self, prfId) :
-#         # 파라미터에 들어갈 정보
-#         params = { "service" : Config.KOPIS_ACCESS_KEY }
+    def get(self, prfId) :
+        # 파라미터에 들어갈 정보
+        params = { "service" : Config.KOPIS_ACCESS_KEY }
 
-#         # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-#         response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + prfId, params = params)
+        # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
+        response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + prfId, params = params)
 
-#         # json 형태로 변환
-#         xmlToJsonConverter = xmltodict.parse(response.text)
+        # json 형태로 변환
+        xmlToJsonConverter = xmltodict.parse(response.text)
 
-#         # json 타입으로 변경
+        # json 타입으로 변경
 
-#         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
 
-#         if res is None :
-#             return { "result" : res }
-#         resultList = res['db']
-
-
-#         return { "result" : resultList }, 200
-
-#     # 상세정보 볼 때 DB에 공연 정보 저장
-#     def post(self, prfId) :
-#         # 파라미터에 들어갈 정보
-#         params = { "service" : Config.KOPIS_ACCESS_KEY }
-
-#         # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-#         response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + prfId, params = params)
-
-#         # json 형태로 변환
-#         xmlToJsonConverter = xmltodict.parse(response.text)
-
-#         # json 타입으로 변경
-#         res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
-
-#         if res is None :
-#             return { "result" : "현재 진행중인 공연이 없습니다."}
-#         resultList = res['db']
-
-#         mt20id = resultList['mt20id']
-#         prfnm = resultList['prfnm']
-#         prfpdfrom = resultList['prfpdfrom']
-#         prfpdto = resultList['prfpdto']
-#         fcltynm = resultList['fcltynm']
-#         prfcast = resultList['prfcast']
-#         prfcrew = resultList['prfcrew']
-#         prfruntime = resultList['prfruntime']
-#         prfage = resultList['prfage']
-#         entrpsnm = resultList['entrpsnm']
-#         pcseguidance = resultList['pcseguidance']
-#         poster = resultList['poster']
-#         sty = resultList['sty']
-#         genrenm = resultList['genrenm']
-#         prfstate = resultList['prfstate']
-#         openrun = resultList['openrun']
-#         mt10id = resultList['mt10id']
-#         dtguidance = resultList['dtguidance']
-
-#         connection = get_connection()
+        if res is None :
+            return { "result" : res }
+        resultList = res['db']
 
 
-#         try :
-#             query = '''insert into prf
-#                         (mt20id , prfnm , prfpdfrom , prfpdto , fcltynm , prfcast , prfcrew , prfruntime , prfage , entrpsnm , pcseguidance , poster , sty , genrenm , prfstate , openrun , mt10id , dtguidance)
-#                         values
-#                         (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
-#             record = (mt20id , prfnm , prfpdfrom , prfpdto , fcltynm , prfcast , prfcrew , prfruntime , prfage , entrpsnm , pcseguidance , poster , sty , genrenm , prfstate , openrun , mt10id , dtguidance)
-#             cursor = connection.cursor()
-#             cursor.execute(query, record)
-#             connection.commit()
-#             cursor.close()
-#             connection.close()
+        return { "result" : resultList }, 200
 
-#         except mysql.connector.Error as e :
-#             print(e)
-#             cursor.close()
-#             connection.close()
+    # 상세정보 볼 때 DB에 공연 정보 저장
+    def post(self, prfId) :
+        # 파라미터에 들어갈 정보
+        params = { "service" : Config.KOPIS_ACCESS_KEY }
 
-#         return { "result" : "success" }, 200
+        # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
+        response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + prfId, params = params)
+
+        # json 형태로 변환
+        xmlToJsonConverter = xmltodict.parse(response.text)
+
+        # json 타입으로 변경
+        res = json.loads(json.dumps(xmlToJsonConverter))['dbs']
+
+        if res is None :
+            return { "result" : "현재 진행중인 공연이 없습니다."}
+        resultList = res['db']
+
+        mt20id = resultList['mt20id']
+        prfnm = resultList['prfnm']
+        prfpdfrom = resultList['prfpdfrom']
+        prfpdto = resultList['prfpdto']
+        fcltynm = resultList['fcltynm']
+        prfcast = resultList['prfcast']
+        prfcrew = resultList['prfcrew']
+        prfruntime = resultList['prfruntime']
+        prfage = resultList['prfage']
+        entrpsnm = resultList['entrpsnm']
+        pcseguidance = resultList['pcseguidance']
+        poster = resultList['poster']
+        sty = resultList['sty']
+        genrenm = resultList['genrenm']
+        prfstate = resultList['prfstate']
+        openrun = resultList['openrun']
+        mt10id = resultList['mt10id']
+        dtguidance = resultList['dtguidance']
+
+        connection = get_connection()
+
+
+        try :
+            query = '''insert into prf
+                        (mt20id , prfnm , prfpdfrom , prfpdto , fcltynm , prfcast , prfcrew , prfruntime , prfage , entrpsnm , pcseguidance , poster , sty , genrenm , prfstate , openrun , mt10id , dtguidance)
+                        values
+                        (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+            record = (mt20id , prfnm , prfpdfrom , prfpdto , fcltynm , prfcast , prfcrew , prfruntime , prfage , entrpsnm , pcseguidance , poster , sty , genrenm , prfstate , openrun , mt10id , dtguidance)
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+
+        return { "result" : "success" }, 200
 
 # 공연 시설 조회
 class PerformancePlaceSearchResource(Resource):
