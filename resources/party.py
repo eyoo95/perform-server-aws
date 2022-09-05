@@ -13,7 +13,7 @@ class PartyResource(Resource) :
         try :
             connection = get_connection()
             userId = get_jwt_identity()
-            query = '''insert into party (userId, prfnm, title)
+            query = '''insert into partyRoom (userId, prfnm, title)
                         values(%s, %s, %s);'''
             record = (userId, data['prfnm'] ,data['title'])
             cursor = connection.cursor()
@@ -75,7 +75,7 @@ class PartyResource(Resource) :
             
             query = '''
                         select pt.*, u.nickname
-                        from party as pt
+                        from partyRoom as pt
                         left join user as u on pt.userId = u.id
                         where '''+searchType+'''
                         limit ''' + limit + ''' offset ''' + offset + ''';
@@ -110,7 +110,7 @@ class PartySpecificResource(Resource) :
         try :
             connection = get_connection()
             userId = get_jwt_identity()
-            query = '''select userId from party where id = %s;'''
+            query = '''select userId from partyRoom where id = %s;'''
             record = (partyId, )
             cursor = connection.cursor(dictionary = True)
             cursor.execute(query, record)
@@ -123,7 +123,7 @@ class PartySpecificResource(Resource) :
                 return { "error" : "수정할 수 없습니다."}
 
             query = '''
-                        update party
+                        update partyRoom
                         set prfnm = %s, title = %s
                         where id = %s;
                     '''
@@ -148,7 +148,7 @@ class PartySpecificResource(Resource) :
         try :
             connection = get_connection()
             userId = get_jwt_identity()
-            query = '''select userId from party where id = %s;'''
+            query = '''select userId from partyRoom where id = %s;'''
             record = (partyId, )
             cursor = connection.cursor(dictionary = True)
             cursor.execute(query, record)
@@ -165,7 +165,7 @@ class PartySpecificResource(Resource) :
             cursor = connection.cursor()
             cursor.execute(query, record)
 
-            query = '''delete from party where id = %s;'''
+            query = '''delete from partyRoom where id = %s;'''
             record = (partyId, )
             cursor = connection.cursor()
             cursor.execute(query, record)
