@@ -2,6 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from config import Config
 from flask_restful import Api
+from resources.party import PartyResource, PartySpecificResource
 from resources.perfomance import PerformanceDetailResource, PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
@@ -83,6 +84,12 @@ api.add_resource(PostingRecommendResource, '/posting/recommend/<int:postingId>')
 api.add_resource(PostingMyPostingResource, '/posting/myposting')
 # 게시글 정렬 내림차순 (큰 값부터)
 api.add_resource(PostingRecommenDescResource, '/posting/lists')
+
+# 파티생성
+api.add_resource(PartyResource, '/party')
+
+# 파티수정, 파티삭제
+api.add_resource(PartySpecificResource, '/party/<int:partyId>')
 
 
 

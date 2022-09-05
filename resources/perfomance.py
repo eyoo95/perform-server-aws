@@ -114,3 +114,68 @@ class PerformancePlaceDetailResource(Resource):
         resultList = json.loads(json.dumps(xmlToJsonConverter))
 
         return { "resultList" : resultList['dbs']['db'] }, 200
+
+# 반경 내 공연 Map 표시
+class NearPerformanceResource(Resource) :
+    def get(self):
+        # 쿼리 스트링으로 오는 데이터는 아래처럼 처리한다.  
+        
+        latitude = request.args['latitude']
+        longitude = request.args['longitude']
+        distance = request.args['distance']
+        isOpen = request.args['isOpen']
+
+        # 공연 여부
+        if isOpen == "open":
+            isOpen = "and isOpen = 1"
+        elif isOpen == "close":
+            isOpen = "and isOpen = 0"
+        elif isOpen == "all":
+            isOpen =""
+
+
+        try :
+            connection = get_connection()
+
+            query = '''set @location = point({}, {});'''.format(longitude, latitude)
+            cursor = connection.cursor()
+            cursor = connection.cursor()
+            cursor.execute(query)
+            connection.commit()
+
+
+            query = '''select prf.mt20id, pp.fcltynm, pp.mt10id, pp.mt13cnt, pp.fcltychartr, pp.opende , pp.seatscale , pp.telno , pp.relateurl , pp.adres , pp.la , pp.lo
+                        , if(char_length(prf.prfstate)= 3,1,0) as isOpen
+                        , st_distance_sphere(@location, latLng) as distance 
+                        from prf
+                        left join prfPlace pp on prf.mt10id = pp.mt10id
+                        group by pp.mt10id having distance <= {} {}
+                        order by distance asc, isOpen desc;'''. format(distance, isOpen)
+
+            # select 문은 dictionary = True를 해준다.
+            cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
+            cursor.execute(query )
+
+            # select문은 아래 함수를 이용해서 데이터를 가져온다.
+            resultList = cursor.fetchall()
+
+            i = 0
+            for record in resultList:
+                resultList[i]['la'] = float(record['la'])
+                resultList[i]['lo'] = float(record['lo'])
+                resultList[i]['distance'] = float(record['distance'])
+                i = i + 1
+            
+
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error":str(e), 'error_no':20}, 503
+
+        return { "result" : "success",
+                "count" : len(resultList),
+                "result" : resultList} , 200
