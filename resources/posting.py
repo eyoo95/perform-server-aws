@@ -43,6 +43,7 @@ class PostingResource(Resource) :
                         left join postingCount pc on pc.postingId = p.id
                         left join postingRecommend pr on pr.postingId = p.id
                         group by p.id
+                        order by createdAt desc
                         limit ''' + limit + ''' offset ''' + offset + ''';
                     '''
             cursor = connection.cursor(dictionary=True)
@@ -180,8 +181,10 @@ class PostingSpecificResource(Resource) :
         return {"result" : "success"}, 200
 
     # 게시물 상세보기 (댓글 추가 필요 혹은 따로 추가)
+    @jwt_required()
     def get(self, postingId) :
         try :
+            userId = get_jwt_identity()
             connection = get_connection()
             query = '''
                         select u.nickname, p.*, ifnull(pc.viewCount,0) as viewCount, count(pr.postingId) as recommend
@@ -189,7 +192,7 @@ class PostingSpecificResource(Resource) :
                         join user u on u.id = p.userId
                         left join postingCount pc on pc.postingId = p.id
                         left join postingRecommend pr on pr.postingId = p.id
-                        where p.id = %s;
+                        group by p.id having p.id = %s;
                     '''
             record = (postingId, )
             cursor = connection.cursor(dictionary=True)
@@ -199,9 +202,44 @@ class PostingSpecificResource(Resource) :
             for record in resultList :
                 resultList[i]['createdAt'] = record['createdAt'].isoformat()
                 resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
+                resultList[i]['viewCount'] = record['viewCount']+1
                 i += 1
+
+            # 조회수 확인
+            query = '''
+                        select userId
+                        from postingCount
+                        where postingId = '''+str(postingId)+''' and userId = '''+str(userId)+''';
+                    '''
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query)
+            resultList2 = cursor.fetchall()
+
+            if resultList2 == []:
+                try:
+                    # 조회수 생성
+
+                    query = '''insert into postingCount (userId, postingId) values ('''+str(userId)+''', '''+str(postingId)+''');'''
+                    cursor = connection.cursor()
+                    cursor.execute(query)
+                    connection.commit()
+                    
+
+                except mysql.connector.Error as e :
+                    print(e)
+
+            # 조회수 증가
+            query = '''update postingCount set viewCount = viewCount + 1 
+                        where postingId = '''+str(postingId)+'''
+                        and userId = '''+str(userId)+''';'''
+
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+
             cursor.close()
             connection.close()
+
 
         except mysql.connector.Error as e :
             print(e)

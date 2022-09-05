@@ -13,3 +13,8 @@ class Config:
     KOPIS_PERFORMANCE_PLACE_SERACH_URL = 'http://kopis.or.kr/openApi/restful/prfplc'
     # 공연 시설 상세 조회
     KOPIS_PERFORMANCE_PLACE_DETAIL_URL = 'http://kopis.or.kr/openApi/restful/prfplc/' # 공연 시설 아이디 기재
+
+    # GOOGLE MAPS
+    GOOGLE_API_KEY = 'AIzaSyDLRY2CF9QwQ5UENhzwJsOb6FKKqieCwhk'
+    # GOOGLE MAPSS NearBySearch
+    GOOGLE_MAP_NEAR_BY_SEARCH_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
