@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="perform-server-aws_my_v3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/perform-server-aws_my_v3.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

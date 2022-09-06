@@ -17,6 +17,8 @@ class PerformaceRecomRealTimeRersource(Resource):
     def get(self) :
         # 클라이언트로부터 데이터를 받아온다.
         userId = get_jwt_identity()
+        limit = request.args['limit']
+        offset = request.args['offset']
 
         try :
             connection = get_connection()
@@ -111,19 +113,14 @@ class PerformaceRecomRealTimeRersource(Resource):
 
             # print(recommendPrfList)
 
-            recommendPrfList = recommendPrfList.iloc[0:5,].reset_index().to_dict("records")
+            recommendPrfList = recommendPrfList.iloc[0:10,].reset_index().to_dict("records")
 
             # 쿼리문에 넣을 prfId 문자열 처리
             recomPrfIdStr = ""
             for i in range(len(recommendPrfList)-1):
-                print(recommendPrfList[i]["prfId"])
                 recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[i]["prfId"]+"'"+" or "
 
-            print(recomPrfIdStr)
-
             recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[-1]["prfId"]+"'"
-
-            print(recomPrfIdStr)
 
 
             # 해당 prfId를 가져와 추천할 prf 가져오기
@@ -131,10 +128,9 @@ class PerformaceRecomRealTimeRersource(Resource):
                         select mt20id, prfnm, prfpdfrom, prfpdto, fcltynm, poster, genrenm, prfstate, openrun
                         from prf
                         where {}
-                        order by prfpdfrom desc;
-                    '''.format(recomPrfIdStr)
-
-            print(query)
+                        order by prfpdfrom desc
+                        limit {} offset {};
+                    '''.format(recomPrfIdStr, limit, offset)
 
             # select 문은 dictionary = True를 해준다.
             cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
