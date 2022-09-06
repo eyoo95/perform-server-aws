@@ -5,9 +5,11 @@ markupsafe==2.0.1
 flask-restful
 Flask-JWT-Extended
 requests
-
+mysql-connector-python
+psycopg2-binary
+passlib
+email-validator
+xmltodict
 
 # 레이어 사용
-# mysql-connector-python psycopg2-binary passlib email-validator 
 # numpy, pandas
-# xmltodict
