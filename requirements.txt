@@ -10,6 +10,7 @@ psycopg2-binary
 passlib
 email-validator
 xmltodict
+boto3
 
 # 레이어 사용
 # numpy, pandas

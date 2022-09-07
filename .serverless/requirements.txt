@@ -1,6 +1,7 @@
 Flask-JWT-Extended
 Flask==1.1.4
 Werkzeug==1.0.1
+boto3
 email-validator
 flask-restful
 markupsafe==2.0.1

@@ -1,3 +1,4 @@
+import datetime
 import requests
 from flask import request
 from flask_restful import Resource
@@ -6,6 +7,7 @@ import mysql.connector
 from config import Config
 from mysql_connection import get_connection
 import xmltodict, json
+import boto3
 
 userId = 'null'
 
@@ -139,7 +141,8 @@ class ReviewDetailResource(Resource) :
 class ReviewAddResource(Resource) :
     @jwt_required()
     def post(self, prfId) :
-        # open api 호출하여 요청 결과 저장
+
+        # open api 호출하여 해당 공연 제목을 저장
         # 파라미터에 들어갈 정보
         params = { "service" : Config.KOPIS_ACCESS_KEY }
         # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
@@ -149,6 +152,30 @@ class ReviewAddResource(Resource) :
         openApiResult = json.loads(json.dumps(xmlToJsonConverter))
         prfName = openApiResult['dbs']['db']['prfnm']
 
+
+        # 리뷰 작성시 업로드한 이미지 파일과 내용 확인
+        file = request.files['photo']
+        title = request.form['title']
+        content = request.form['content']
+        rating = request.form['rating']
+
+        # 파일명 변경, 파일명은 유니크 (중복이 없도록)
+        current_time = datetime.now()
+        new_file_name = current_time.isoformat().replace(':', '_') + '.png'
+
+        # 클라이언트에서 받은 파일의 이름 변경
+        file.filename = new_file_name
+        print('s3 upload start')
+
+        # S3에 업로드, AWS 라이브러리 사용 (boto3)
+        s3 = boto3.client('s3', aws_access_key_id = Config.AWS_ACCESS_KEY, \
+                    aws_secret_access_key = Config.AWS_SECRET_KEY)
+        try :
+            s3.upload_fileobj(file, Config.S3_BUCKET, file.filename, \
+                ExtraArgs={'ACL':'public-read', 'ContentType':file.content_type})
+        except Exception as e :
+            return {'error' : str(e)}, 500
+
         # 리뷰 작성과 조회수 초기화
         data = request.get_json()
         try :
@@ -156,9 +183,9 @@ class ReviewAddResource(Resource) :
             userId = get_jwt_identity()
 
             # 리뷰 작성
-            query = '''insert into review (userId, prfId, prfName, title, content)
-                        values(%s, %s, %s, %s, %s);'''
-            record = (userId, prfId, prfName, data['title'], data['content'])
+            query = '''insert into review (userId, prfId, prfName, title, content, rating)
+                        values(%s, %s, %s, %s, %s, %s);'''
+            record = (userId, prfId, prfName, title, content, rating)
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
@@ -199,6 +226,7 @@ class ReviewAddResource(Resource) :
             return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
 
         return { "result" : "success" }, 200
+
 
 # 리뷰 수정
 class ReviewModifyResource(Resource) :
