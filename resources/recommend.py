@@ -62,6 +62,8 @@ class PerformaceRecomRealTimeRersource(Resource):
 
             matrix = dfPrf.pivot_table(index='userId', columns = 'prfId', values='rating')
 
+
+            ###################################### 데이터가 어느정도 쌓이면 최소값을 주는걸로 합니다.
             df = matrix.corr() # min_periods=50
 
             #####
@@ -148,25 +150,4 @@ class PerformaceRecomRealTimeRersource(Resource):
 
 
 
-        return { "result" : "success",
-                  "resultList" : resultList  },200
-
-class myInterestingPerformanceTop3Resource(Resource) :
-    def get(self, prfId1, prfId2, prfId3) :
-        # 파라미터에 들어갈 정보
-        params = { "service" : Config.KOPIS_ACCESS_KEY }
-
-        prfId = [ prfId1, prfId2, prfId3 ]
-        resultList = []
-
-        for i in prfId :
-            # 요청하는 API의 URL과 API에서 요구하는 데이터 입력
-            response = requests.get(Config.KOPIS_PERFORMANCE_DETAIL_URL + i, params = params)
-
-            # json 형태로 변환
-            xmlToJsonConverter = xmltodict.parse(response.text)
-            res = json.loads(json.dumps(xmlToJsonConverter))['dbs']['db']
-
-            resultList.append(res)
-
-        return { "resultList" : resultList }, 200
+        return { "resultList" : resultList },200
