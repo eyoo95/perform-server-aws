@@ -173,7 +173,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/perform-server-aws/dev/1662431424128-2022-09-06T02:30:24.128Z/perform-server-aws.zip"
+                "S3Key": "serverless/perform-server-aws/dev/1662515550271-2022-09-07T01:52:30.271Z/perform-server-aws.zip"
               },
               "Handler": "wsgi_handler.handler",
               "Runtime": "python3.8",
@@ -191,14 +191,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersion562zHVdOH4YVEjEFpkDwGmJXTZer4EdCgQ6s4qJZxM": {
+          "ApiLambdaVersioniW8gzarZeoUAFXLXgVZuUyrx7pVmtrggGcXIZbB4gRc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "PCqm4wJov2z/y3ODM2AsRrA2VEsUmjg1bLCbDafZnK4="
+              "CodeSha256": "siq3tRg3tbTJ+d2WbC7GfpfvgNGNybg2YpZRXJW00KI="
             }
           },
           "HttpApi": {
@@ -305,7 +305,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersion562zHVdOH4YVEjEFpkDwGmJXTZer4EdCgQ6s4qJZxM"
+              "Ref": "ApiLambdaVersioniW8gzarZeoUAFXLXgVZuUyrx7pVmtrggGcXIZbB4gRc"
             },
             "Export": {
               "Name": "sls-perform-server-aws-dev-ApiLambdaFunctionQualifiedArn"
@@ -456,7 +456,7 @@
         "timeout": 6,
         "runtime": "python3.8",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersion562zHVdOH4YVEjEFpkDwGmJXTZer4EdCgQ6s4qJZxM"
+        "versionLogicalId": "ApiLambdaVersioniW8gzarZeoUAFXLXgVZuUyrx7pVmtrggGcXIZbB4gRc"
       }
     },
     "configValidationMode": "warn",
@@ -483,7 +483,7 @@
     "artifact": "C:\\Users\\uosc2\\Documents\\GitHub\\perform-server-aws\\.serverless\\perform-server-aws.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/perform-server-aws/dev/1662431424128-2022-09-06T02:30:24.128Z",
+    "artifactDirectoryName": "serverless/perform-server-aws/dev/1662515550271-2022-09-07T01:52:30.271Z",
     "artifact": "perform-server-aws.zip"
   }
 }

@@ -227,6 +227,7 @@ class ReviewModifyResource(Resource) :
             cursor.execute(query, record)
             resultList = cursor.fetchall()
             prfId = resultList[0]['prfId']
+            cursor.close()
 
             # 수정
             query = '''update review set title = %s, content = %s where id = %s;'''
@@ -254,9 +255,30 @@ class ReviewModifyResource(Resource) :
 
 # 리뷰 삭제
 class ReviewDeleteResource(Resource) :
+    @jwt_required()
     def delete(self, reviewId) :
         try :
             connection = get_connection()
+            userId = get_jwt_identity()
+
+            # prfID 확인
+            query = '''select prfId from review where id = %s;'''
+            record = (reviewId, )
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query, record)
+            resultList = cursor.fetchall()
+            prfId = resultList[0]['prfId']
+            cursor.close()
+            
+
+            # 해당 리뷰의 별점 삭제
+            query = '''delete from prfRating where userId = {} and prfId = "{}" ;'''.format(userId, prfId)
+            cursor = connection.cursor()
+            cursor.execute(query)
+            connection.commit()
+            cursor.close()
+
+            # 리뷰 삭제
             query = '''delete from review where id = %s;'''
             record = (reviewId, )
             cursor = connection.cursor()
