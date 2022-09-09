@@ -14,7 +14,15 @@ class Config:
     # 공연 시설 상세 조회
     KOPIS_PERFORMANCE_PLACE_DETAIL_URL = 'http://kopis.or.kr/openApi/restful/prfplc/' # 공연 시설 아이디 기재
 
+    # Aws
+    AWS_ACCESS_KEY = 'AKIAWXNF62KJVP7HTOTC'
+    AWS_SECRET_KEY = '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'
+
     # GOOGLE MAPS
     GOOGLE_API_KEY = 'AIzaSyDLRY2CF9QwQ5UENhzwJsOb6FKKqieCwhk'
     # GOOGLE MAPSS NearBySearch
     GOOGLE_MAP_NEAR_BY_SEARCH_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
+
+    # S3 버킷이름과 기본 URL 주소 설정
+    S3_BUCKET = 'prf-image-eyoo95'
+    S3_LOCATION = 'https://prf-image-eyoo95.s3.ap-northeast-2.amazonaws.com/'

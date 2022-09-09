@@ -94,6 +94,7 @@ class PerformaceRecomRealTimeRersource(Resource):
                 similarPrf['Weight'] = dfMyRating['rating'][i] * similarPrf['Correlation']
                 similarPrfList = pd.concat([similarPrfList,similarPrf])
 
+
             # 중복된 영화가 있을수있다. 중복된영화는 weight가 가장 큰 값으로 해준다.
             similarPrfList.reset_index(inplace=True)
             recommendPrfList = similarPrfList.groupby('prfId')['Weight'].max().sort_values(ascending=False)
@@ -101,19 +102,19 @@ class PerformaceRecomRealTimeRersource(Resource):
 
 # 데이터가 어느정도 쌓이면 아래의 주석을 푸는걸로 합니다.
 
-            # # 내가 이미 봐서 별점을 남긴 영화는 제외해야한다.
-            # similarPrfList = similarPrfList.reset_index()
+#             # 내가 이미 봐서 별점을 남긴 영화는 제외해야한다.
+#             similarPrfList = similarPrfList.reset_index()
 
-            # # 내가 이미 본 영화제목만 가져온다.
-            # titleList = dfMyRating['title'].tolist()
+#             # 내가 이미 본 영화제목만 가져온다.
+#             titleList = dfMyRating['title'].tolist()
 
-            # print(titleList)
+#             print(titleList)
 
-            # # similarPrfList에 내가 본영화인 titleList를 제외하고 가져온다.
-            # similarPrfList['title'].isin(titleList)
-            # recommendPrfList = similarPrfList.loc[ ~similarPrfList['title'].isin(titleList), ]
+#             # similarPrfList에 내가 본영화인 titleList를 제외하고 가져온다.
+#             similarPrfList['title'].isin(titleList)
+#             recommendPrfList = similarPrfList.loc[ ~similarPrfList['title'].isin(titleList), ]
 
-            # print(recommendPrfList)
+#             print(recommendPrfList)
 
             recommendPrfList = recommendPrfList.iloc[0:10,].reset_index().to_dict("records")
 

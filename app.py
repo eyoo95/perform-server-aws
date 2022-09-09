@@ -8,7 +8,7 @@ from resources.perfomance import PerformancePlaceDetailResource, PerformanceSear
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
 from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
-from resources.recommend import myInterestingPerformanceTop3Resource, PerformaceRecomRealTimeRersource
+from resources.recommend import PerformaceRecomRealTimeRersource
 
 app = Flask(__name__)
 # 브렌치 테스트
@@ -101,8 +101,6 @@ api.add_resource(PartyResource, '/party')
 # 파티수정, 파티삭제
 api.add_resource(PartySpecificResource, '/party/<int:partyId>')
 
-# 내 취향 추천 탑 3 myInterestingPerformanceTop3Resource
-api.add_resource(myInterestingPerformanceTop3Resource, '/recommend/myinterest/<prfId1>/<prfId2>/<prfId3>')
 # 실시간 공연 개인화 추천 API
 api.add_resource(PerformaceRecomRealTimeRersource, '/performance/recommend')
 
