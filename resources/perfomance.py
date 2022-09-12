@@ -418,7 +418,7 @@ class NearPerformanceResource(Resource) :
                 "result" : resultList} , 200
 
 
-# 공연 좋아요 추가
+# 공연 좋아요 추가 
 class PerformanceLikeResource(Resource) :
     @jwt_required()
     def post(self, prfId) :
