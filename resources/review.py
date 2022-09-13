@@ -155,6 +155,7 @@ class ReviewAddResource(Resource) :
 
         # 클라이언트에서 받은 파일의 이름 변경
         file.filename = new_file_name
+        imgUrl = Config.S3_LOCATION+file.filename
 
         # S3에 업로드, AWS 라이브러리 사용 (boto3)
         s3 = boto3.client('s3', aws_access_key_id = Config.AWS_ACCESS_KEY, \
@@ -165,6 +166,7 @@ class ReviewAddResource(Resource) :
         except Exception as e :
             return {'error' : str(e)}, 500
 
+
         # 리뷰 작성과 조회수 초기화
         try :
             connection = get_connection()
@@ -173,10 +175,11 @@ class ReviewAddResource(Resource) :
             # 리뷰 작성
             query = '''insert into review (userId, prfId, prfName, title, content, imgUrl)
                         values(%s, %s, %s, %s, %s, %s);'''
-            record = (userId, prfId, prfName, title, content, Config.S3_LOCATION+file.filename)
+            record = (userId, prfId, prfName, title, content, imgUrl)
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
+
 
             # 별점 추가 
             query = '''insert into prfRating
@@ -187,7 +190,6 @@ class ReviewAddResource(Resource) :
             cursor = connection.cursor()
             cursor.execute(query, record)
             connection.commit()
-            
 
             # 작성한 리뷰 조회수 초기화를 위한 리뷰 ID 확인
             query = ''' select id from review where userId = %s order by id desc limit 1;'''
@@ -204,8 +206,90 @@ class ReviewAddResource(Resource) :
             cursor.execute(query, record)
             connection.commit()
 
-            cursor.close()
+            #cursor.close()
             connection.close()
+
+
+            # 관람 인증 확인 기능
+            # 글자 인식 인공지능 API 설정 (Clova OCR)
+            request_json = {
+                'images': [
+                    {
+                        'format': 'png',
+                        'name': 'test1',
+                        'url' : imgUrl
+                    }
+                ],
+                'lang' : 'ko',
+                'requestId': str(uuid.uuid4()),
+                'version': 'V2',
+                'timestamp': int(round(time.time() * 1000))
+            }
+
+            payload = json.dumps(request_json).encode('UTF-8')
+            headers = {
+                'X-OCR-SECRET': Config.CLOVA_ACCESS_KEY,
+                'Content-Type': 'application/json'
+            }
+
+            # 글자 인식 인공지능 API 호출 (Clova OCR)
+            response = requests.request("POST", Config.CLOVA_BASE_URL, headers=headers, data = payload)
+            response = response.json()
+            print(response)
+
+            # 공연 이름 특수 문자 제거
+            textTranslator = prfName.maketrans({
+                "." : "", "," : "", "[" : "", "]" : "",
+                "(" : "", ")" : "", "!" : "", "~" : "",
+                "-" : "", ":" : "", "|" : "", "@" : "",
+                "@" : "", "#" : "", "$" : "", "%" : "",
+                "^" : "", "&" : "", "*" : "", "/" : "",
+                "+" : "", "-" : "`", "_" : "", "=" : "",
+                "'" : "", "\"" : "", "<" : "", ">" : "", "\\" : ""
+                })
+            prfName = prfName.translate(textTranslator).upper()
+
+            # 공연 이름 단어별 분리
+            prfNameList = []
+            prfNameList.append(prfName.split())
+
+            print("prfName List : ", prfNameList)
+
+            # 글자 인식 정보 저장
+            fields = response['images'][0]['fields']
+
+            # 인식된 글자 특수 문자 제거
+            inferTextList = []
+            for i in range( len(fields) ) :
+                inferTextList.append( fields[i]['inferText'].upper() )
+            inferText= " ".join(inferTextList).translate(textTranslator)
+            inferTextList = []
+            inferTextList.append(inferText.split())
+
+            print("inferText List : ", inferTextList)
+
+            # 공연 이름과 티켓의 글자가 일치하는지 검사
+            classifyCount = 0
+            for i in range ( len(prfNameList[0]) ) :
+                for j in range ( len(inferTextList[0]) ) :
+                    if prfNameList[0][i] in inferTextList[0][j] :
+                        classifyCount += 1
+                        print(prfNameList[0][i], inferTextList[0][j])
+                        break
+                        
+
+            print("name split number : ", len(prfNameList[0]))
+            print("classify count : ", classifyCount)
+
+            # 공연 이름과 얼마나 일치하는지 정확도 표시
+            imgAcc = ( classifyCount / len(prfNameList[0]) ) * 100
+            print("imgAcc : ", imgAcc,"%")
+
+            # 공연 이름과 티켓 이름의 표기가 다를 수 있으므로 적당한 승인 퍼센테이지 조정
+            if imgAcc >= 85 :
+                certify = 1 # 티켓 인증
+            else :
+                certify = 0 # 티켓 인증 불합격
 
         except mysql.connector.Error as e :
             print(e)
@@ -213,63 +297,9 @@ class ReviewAddResource(Resource) :
             connection.close()
             return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
 
-        return { "result" : "success",
-                "Imgurl" : Config.S3_LOCATION + file.filename }, 200
-
-
-
-# 리뷰 수정
-class ReviewModifyResource(Resource) :
-    @jwt_required()
-    def put(self, reviewId) :
-        data = request.get_json()
-        try :
-            connection = get_connection()
-            userId = get_jwt_identity()
-            query = '''select userId from review where id = %s;'''
-            record = (reviewId, )
-            cursor = connection.cursor(dictionary = True)
-            cursor.execute(query, record)
-            resultList = cursor.fetchall()
-            review = resultList[0]
-
-            if review['userId'] != userId :
-                cursor.close()
-                connection.close()
-                return { "error" : "수정할 수 없습니다."}
-
-            # prfID 확인
-            query = '''select prfId from review where id = %s;'''
-            record = (reviewId, )
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute(query, record)
-            resultList = cursor.fetchall()
-            prfId = resultList[0]['prfId']
-            cursor.close()
-
-            # 수정
-            query = '''update review set title = %s, content = %s where id = %s;'''
-            record = (data['title'], data['content'], reviewId)
-            cursor = connection.cursor()
-            cursor.execute(query, record)
-            connection.commit()
-            cursor.close()
-            
-            # 별점 추가 
-            query = '''update prfRating set rating = %s where prfId = %s and userId = %s;'''
-            record = (data['rating'], prfId, userId)
-            cursor = connection.cursor()
-            cursor.execute(query, record)
-            connection.commit()
-            connection.close()
-
-        except mysql.connector.Error as e :
-            print(e)
-            cursor.close()
-            connection.close()
-            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
-
-        return {"result" : "success"}, 200
+        return { "result" : certify, #certify,
+                "accurate" : imgAcc,
+                "imgUrl" : imgUrl }, 200
 
 # 리뷰 삭제
 class ReviewDeleteResource(Resource) :
