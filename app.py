@@ -7,7 +7,7 @@ from resources.clovaocr import imgOrcClassifyResource
 from resources.party import PartyResource, PartySpecificResource
 from resources.perfomance import PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource, NearByPerformanceResource, PerformanceLikeResource, PerformanceDetailDBResource, NearPerformanceResource, PerformanceDetailResource
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
-from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
+from resources.review import ReviewAddResource, ReviewAllListResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
 from resources.recommend import PerformaceRecomRealTimeRersource
 
@@ -54,6 +54,8 @@ api.add_resource(UserInfoResource, '/user')
 api.add_resource(ReviewSearchResource, '/review/<prfId>')
 # 내 리뷰 보기
 api.add_resource(ReviewMyListResource, '/review/myreview')
+# 모든 리뷰 보기
+api.add_resource(ReviewAllListResource, '/review')
 # 리뷰 상세 보기
 api.add_resource(ReviewDetailResource, '/review/detail/<int:reviewId>')
 # 리뷰 작성
