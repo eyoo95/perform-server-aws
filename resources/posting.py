@@ -250,9 +250,34 @@ class PostingSpecificResource(Resource) :
         return { "resultList" : resultList }, 200
 
 
-
-# 게시물 추천
 class PostingRecommendResource(Resource) :
+
+    # 게시물 추천 확인
+    @jwt_required()
+    def get(self, postingId) :
+        
+        try :
+            userId = get_jwt_identity()
+            connection = get_connection()
+            query = '''
+                        select * from postingRecommend where userId = {} and postingId = {};
+                    '''.format(userId,postingId)
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query)
+            resultList = cursor.fetchall()
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return { "resultList" : resultList }, 200
+
+
+    # 게시물 추천
     @jwt_required()
     def post(self, postingId) :
         try :

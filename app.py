@@ -2,16 +2,16 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from config import Config
 from flask_restful import Api
+from resources.clovaocr import imgOrcClassifyResource
 
 from resources.party import PartyResource, PartySpecificResource
 from resources.perfomance import PerformancePlaceDetailResource, PerformanceSearchResource, PerformancePlaceSearchResource, NearByPerformanceResource, PerformanceLikeResource, PerformanceDetailDBResource, NearPerformanceResource, PerformanceDetailResource
 from resources.user import jwt_blacklist, UserRegisterResource, UserLoginResource, UserLogoutResource, UserWithdrawalResource,UserEditPasswordResource, UserEditNicknameResource, UserEditAgeResource, UserEditGenderResource, UserValdationResource, UserInfoResource
-from resources.review import ReviewAddResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
+from resources.review import ReviewAddResource, ReviewAllListResource, ReviewDeleteResource, ReviewDetailResource, ReviewModifyResource, ReviewMyListResource, ReviewRecommendCancelResource, ReviewRecommendResource, ReviewSearchResource
 from resources.posting import PostingRecommenDescResource, PostingResource, PostingSpecificResource, PostingRecommendResource, PostingMyPostingResource
 from resources.recommend import PerformaceRecomRealTimeRersource
 
 app = Flask(__name__)
-# 브렌치 테스트
 
 # 환경변수 세팅
 app.config.from_object(Config)
@@ -54,6 +54,8 @@ api.add_resource(UserInfoResource, '/user')
 api.add_resource(ReviewSearchResource, '/review/<prfId>')
 # 내 리뷰 보기
 api.add_resource(ReviewMyListResource, '/review/myreview')
+# 모든 리뷰 보기
+api.add_resource(ReviewAllListResource, '/review')
 # 리뷰 상세 보기
 api.add_resource(ReviewDetailResource, '/review/detail/<int:reviewId>')
 # 리뷰 작성
@@ -84,7 +86,6 @@ api.add_resource(NearPerformanceResource, '/nearperformance')
 # 공연 좋아요, 좋아요 취소
 api.add_resource(PerformanceLikeResource, '/performance/like/<prfId>')
 
-
 # 포스팅 작성, 목록 조회
 api.add_resource(PostingResource, '/posting')
 # 포스팅 하나 조회, 수정, 삭제 
@@ -100,10 +101,11 @@ api.add_resource(PostingRecommenDescResource, '/posting/lists')
 api.add_resource(PartyResource, '/party')
 # 파티수정, 파티삭제
 api.add_resource(PartySpecificResource, '/party/<int:partyId>')
-
 # 실시간 공연 개인화 추천 API
 api.add_resource(PerformaceRecomRealTimeRersource, '/performance/recommend')
 
+# 리뷰 작성시 티켓 이미지 인증 확인
+api.add_resource(imgOrcClassifyResource, '/imgocr')
 
 
 
