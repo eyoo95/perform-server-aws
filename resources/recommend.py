@@ -15,30 +15,23 @@ import mysql.connector
 class PerformaceRecomRealTimeRersource(Resource):
     @jwt_required()
     def get(self) :
-        # 클라이언트로부터 데이터를 받아온다.
         userId = get_jwt_identity()
         limit = request.args['limit']
         offset = request.args['offset']
 
         try :
             connection = get_connection()
-
-            ####
             # 유저의 별점 정보를 DB에서 가져온다.
             query = '''select pr.userId, pr.prfId, pr.rating
                         from prfRating pr
                         join prf
                         on prf.mt20id = pr.prfId;'''
-            # select 문은 dictionary = True를 해준다.
-            cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
+            cursor = connection.cursor(dictionary = True) 
             cursor.execute(query)
-            # select문은 아래 함수를 이용해서 데이터를 가져온다.
             resultList = cursor.fetchall()
             cursor.close()
-            
             # 별점 정보
             dfPrfRating = pd.DataFrame(data= resultList)
-
             # 상연되고 있거나 별점이 있는 공연 정보
             query = '''select prf.mt20id as prfId
                         , if(char_length(prfstate)= 3,1,0) as isOpen, ifnull(count(pr.prfId),0) as countRating
@@ -46,25 +39,19 @@ class PerformaceRecomRealTimeRersource(Resource):
                         left join prfRating pr on prf.mt20id = pr.prfId
                         group by prf.mt20id having isOpen = 1 or countRating > 0
                         order by isOpen desc, countRating desc;'''
-            # select 문은 dictionary = True를 해준다.
-            cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
+            cursor = connection.cursor(dictionary = True)
             cursor.execute(query)
-            # select문은 아래 함수를 이용해서 데이터를 가져온다.
             resultList = cursor.fetchall()
             cursor.close()
-
-
             # 유효한 공연 정보
             dfPrf = pd.DataFrame(data = resultList).drop("isOpen", axis=1).drop("countRating",axis=1)
 
             # 별점, 공연 데이터프레임 합치기
             dfPrf = pd.merge(dfPrfRating,dfPrf,on= 'prfId')
-
+            # 피봇테이블 만들기
             matrix = dfPrf.pivot_table(index='userId', columns = 'prfId', values='rating')
-
-
-            ###################################### 데이터가 어느정도 쌓이면 최소값을 주는걸로 합니다.
-            df = matrix.corr() # min_periods=50
+            # correlation으로 관계값 찾기
+            df = matrix.corr() # 데이터가 어느정도 쌓이면 최소값을 조정
 
             #####
 
