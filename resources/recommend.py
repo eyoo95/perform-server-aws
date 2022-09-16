@@ -107,10 +107,15 @@ class PerformaceRecomRealTimeRersource(Resource):
 
             # 쿼리문에 넣을 prfId 문자열 처리
             recomPrfIdStr = ""
-            for i in range(len(recommendPrfList)-1):
-                recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[i]["prfId"]+"'"+" or "
-
-            recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[-1]["prfId"]+"'"
+            if len(recommendPrfList) == 1:
+                recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[0]["prfId"]+"'"
+            elif len(recommendPrfList) > 1:
+                for i in range(len(recommendPrfList)-1):
+                    recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[i]["prfId"]+"'"+" or "
+                recomPrfIdStr = recomPrfIdStr +"mt20id = '"+ recommendPrfList[-1]["prfId"]+"'"
+            elif len(recommendPrfList) < 1:
+                recommendPrfList = None
+                return{ "resultList" : None }, 200
 
 
             # 해당 prfId를 가져와 추천할 prf 가져오기

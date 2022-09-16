@@ -21,7 +21,7 @@ class ReviewSearchResource(Resource) :
             limit = request.args.get('limit')
             offset = request.args.get('offset')
             query = '''
-                        select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, r.verified,
+                        select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, r.verified, r.title, r.imgUrl,
                         r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount, rt.rating
                         from review r
                         join prf on prf.mt20id = r.prfId
@@ -101,7 +101,7 @@ class ReviewAllListResource(Resource) :
             limit = request.args.get('limit')
             offset = request.args.get('offset')
             query = '''
-                        select r.id as reviewId, u.id as userId, u.nickname, r.prfName, r.title, r.content, r.imgUrl, r.verified, r.createdAt, r.updatedAt,
+                        select r.id as reviewId, u.id as userId, u.nickName, r.prfName, r.title, r.content, r.imgUrl, r.verified, r.createdAt, r.updatedAt,
                         rc.viewCount, count(rr.reviewId) as reviewRecommend, pr.rating
                         from review r
                         left join user u on r.userId = u.id
