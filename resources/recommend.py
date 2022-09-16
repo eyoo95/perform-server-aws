@@ -1,9 +1,5 @@
-import requests
 from flask import request
 from flask_restful import Resource
-import xmltodict
-import json
-from config import Config
 import pandas as pd 
 from flask_restful import Resource
 from mysql.connector.errors import Error
