@@ -542,7 +542,7 @@
     },
     "Limit":{
       "type":"integer",
-      "max":25,
+      "max":10,
       "min":1
     },
     "ListAvailableResourceDimensionsRequest":{
@@ -633,7 +633,7 @@
     },
     "MaxResults":{
       "type":"integer",
-      "max":25,
+      "max":20,
       "min":0
     },
     "MetricDimensionGroups":{

@@ -196,9 +196,8 @@ class Session:
     def _register_endpoint_resolver(self):
         def create_default_resolver():
             loader = self.get_component('data_loader')
-            endpoints, path = loader.load_data_with_path('endpoints')
-            uses_builtin = loader.is_builtin_path(path)
-            return EndpointResolver(endpoints, uses_builtin_data=uses_builtin)
+            endpoints = loader.load_data('endpoints')
+            return EndpointResolver(endpoints)
 
         self._internal_components.lazy_register_component(
             'endpoint_resolver', create_default_resolver

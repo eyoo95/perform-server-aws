@@ -844,8 +844,7 @@
         },
         "affectedInstances":{
           "shape":"Long",
-          "documentation":"<p>The IDs of Amazon EC2 instances using this AMI.</p>",
-          "box":true
+          "documentation":"<p>The IDs of Amazon EC2 instances using this AMI.</p>"
         },
         "ami":{
           "shape":"AmiId",
@@ -905,13 +904,11 @@
       "members":{
         "ec2":{
           "shape":"Boolean",
-          "documentation":"<p>Represents whether Amazon EC2 scans are automatically enabled for new members of your Amazon Inspector organization.</p>",
-          "box":true
+          "documentation":"<p>Represents whether Amazon EC2 scans are automatically enabled for new members of your Amazon Inspector organization.</p>"
         },
         "ecr":{
           "shape":"Boolean",
-          "documentation":"<p>Represents whether Amazon ECR scans are automatically enabled for new members of your Amazon Inspector organization.</p>",
-          "box":true
+          "documentation":"<p>Represents whether Amazon ECR scans are automatically enabled for new members of your Amazon Inspector organization.</p>"
         }
       },
       "documentation":"<p>Represents which scan types are automatically enabled for new members of your Amazon Inspector organization.</p>"
@@ -1151,7 +1148,10 @@
         }
       }
     },
-    "Boolean":{"type":"boolean"},
+    "Boolean":{
+      "type":"boolean",
+      "box":true
+    },
     "CancelFindingsReportRequest":{
       "type":"structure",
       "required":["reportId"],
@@ -1209,8 +1209,7 @@
       "members":{
         "count":{
           "shape":"AggCounts",
-          "documentation":"<p>The number of resources.</p>",
-          "default":0
+          "documentation":"<p>The number of resources.</p>"
         },
         "groupKey":{
           "shape":"GroupKey",
@@ -1472,8 +1471,7 @@
       "members":{
         "baseScore":{
           "shape":"Double",
-          "documentation":"<p>The base CVSS score used for the finding.</p>",
-          "box":true
+          "documentation":"<p>The base CVSS score used for the finding.</p>"
         },
         "scoringVector":{
           "shape":"NonEmptyString",
@@ -1531,8 +1529,7 @@
         },
         "score":{
           "shape":"Double",
-          "documentation":"<p>The CVSS score.</p>",
-          "box":true
+          "documentation":"<p>The CVSS score.</p>"
         },
         "scoreSource":{
           "shape":"NonEmptyString",
@@ -1649,8 +1646,7 @@
         },
         "maxAccountLimitReached":{
           "shape":"Boolean",
-          "documentation":"<p>Represents whether your organization has reached the maximum Amazon Web Services account limit for Amazon Inspector.</p>",
-          "box":true
+          "documentation":"<p>Represents whether your organization has reached the maximum Amazon Web Services account limit for Amazon Inspector.</p>"
         }
       }
     },
@@ -1749,7 +1745,10 @@
         }
       }
     },
-    "Double":{"type":"double"},
+    "Double":{
+      "type":"double",
+      "box":true
+    },
     "Ec2InstanceAggregation":{
       "type":"structure",
       "members":{
@@ -1802,8 +1801,7 @@
         },
         "networkFindings":{
           "shape":"Long",
-          "documentation":"<p>The number of network findings for the Amazon EC2 instance.</p>",
-          "box":true
+          "documentation":"<p>The number of network findings for the Amazon EC2 instance.</p>"
         },
         "operatingSystem":{
           "shape":"String",
@@ -2211,10 +2209,6 @@
           "shape":"DateFilterList",
           "documentation":"<p>Details on the date and time a finding was first seen used to filter findings.</p>"
         },
-        "fixAvailable":{
-          "shape":"StringFilterList",
-          "documentation":"<p>Details on whether a fix is available through a version update. This value can be <code>YES</code>, <code>NO</code>, or <code>PARTIAL</code>. A <code>PARTIAL</code> fix means that some, but not all, of the packages identified in the finding have fixes available through updated versions.</p>"
-        },
         "inspectorScore":{
           "shape":"NumberFilterList",
           "documentation":"<p>The Amazon Inspector score to filter on.</p>"
@@ -2328,14 +2322,9 @@
           "shape":"DateTimeTimestamp",
           "documentation":"<p>The date and time that the finding was first observed.</p>"
         },
-        "fixAvailable":{
-          "shape":"FixAvailable",
-          "documentation":"<p>Details on whether a fix is available through a version update. This value can be <code>YES</code>, <code>NO</code>, or <code>PARTIAL</code>. A <code>PARTIAL</code> fix means that some, but not all, of the packages identified in the finding have fixes available through updated versions.</p>"
-        },
         "inspectorScore":{
           "shape":"Double",
-          "documentation":"<p>The Amazon Inspector score given to the finding.</p>",
-          "box":true
+          "documentation":"<p>The Amazon Inspector score given to the finding.</p>"
         },
         "inspectorScoreDetails":{
           "shape":"InspectorScoreDetails",
@@ -2462,14 +2451,6 @@
         "CRITICAL",
         "HIGH",
         "ALL"
-      ]
-    },
-    "FixAvailable":{
-      "type":"string",
-      "enum":[
-        "YES",
-        "NO",
-        "PARTIAL"
       ]
     },
     "FreeTrialAccountInfo":{
@@ -2755,7 +2736,10 @@
       },
       "documentation":"<p>Information about the Amazon Inspector score given to a finding.</p>"
     },
-    "Integer":{"type":"integer"},
+    "Integer":{
+      "type":"integer",
+      "box":true
+    },
     "InternalServerException":{
       "type":"structure",
       "required":["message"],
@@ -2764,7 +2748,6 @@
         "retryAfterSeconds":{
           "shape":"Integer",
           "documentation":"<p>The number of seconds to wait before retrying the request.</p>",
-          "box":true,
           "location":"header",
           "locationName":"Retry-After"
         }
@@ -2796,6 +2779,7 @@
     },
     "ListAccountPermissionsMaxResults":{
       "type":"integer",
+      "box":true,
       "max":1024,
       "min":1
     },
@@ -2804,8 +2788,7 @@
       "members":{
         "maxResults":{
           "shape":"ListAccountPermissionsMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -2833,6 +2816,7 @@
     },
     "ListCoverageMaxResults":{
       "type":"integer",
+      "box":true,
       "max":200,
       "min":1
     },
@@ -2845,8 +2829,7 @@
         },
         "maxResults":{
           "shape":"ListCoverageMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -2898,8 +2881,7 @@
         },
         "totalCounts":{
           "shape":"Long",
-          "documentation":"<p>The total number for all groups.</p>",
-          "box":true
+          "documentation":"<p>The total number for all groups.</p>"
         }
       }
     },
@@ -2908,8 +2890,7 @@
       "members":{
         "maxResults":{
           "shape":"ListDelegatedAdminMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -2932,11 +2913,13 @@
     },
     "ListDelegatedAdminMaxResults":{
       "type":"integer",
+      "box":true,
       "max":5,
       "min":1
     },
     "ListFilterMaxResults":{
       "type":"integer",
+      "box":true,
       "max":100,
       "min":1
     },
@@ -2953,8 +2936,7 @@
         },
         "maxResults":{
           "shape":"ListFilterMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -2978,6 +2960,7 @@
     },
     "ListFindingAggregationsMaxResults":{
       "type":"integer",
+      "box":true,
       "max":100,
       "min":1
     },
@@ -2999,8 +2982,7 @@
         },
         "maxResults":{
           "shape":"ListFindingAggregationsMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -3028,6 +3010,7 @@
     },
     "ListFindingsMaxResults":{
       "type":"integer",
+      "box":true,
       "max":100,
       "min":1
     },
@@ -3040,8 +3023,7 @@
         },
         "maxResults":{
           "shape":"ListFindingsMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -3068,6 +3050,7 @@
     },
     "ListMembersMaxResults":{
       "type":"integer",
+      "box":true,
       "max":50,
       "min":1
     },
@@ -3076,8 +3059,7 @@
       "members":{
         "maxResults":{
           "shape":"ListMembersMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"NextToken",
@@ -3085,8 +3067,7 @@
         },
         "onlyAssociated":{
           "shape":"Boolean",
-          "documentation":"<p>Specifies whether to list only currently associated members if <code>True</code> or to list all members within the organization if <code>False</code>.</p>",
-          "box":true
+          "documentation":"<p>Specifies whether to list only currently associated members if <code>True</code> or to list all members within the organization if <code>False</code>.</p>"
         }
       }
     },
@@ -3126,6 +3107,7 @@
     },
     "ListUsageTotalsMaxResults":{
       "type":"integer",
+      "box":true,
       "max":500,
       "min":1
     },
@@ -3142,8 +3124,7 @@
         },
         "maxResults":{
           "shape":"ListUsageTotalsMaxResults",
-          "documentation":"<p>The maximum number of results to return in the response.</p>",
-          "box":true
+          "documentation":"<p>The maximum number of results to return in the response.</p>"
         },
         "nextToken":{
           "shape":"ListUsageTotalsNextToken",
@@ -3164,7 +3145,10 @@
         }
       }
     },
-    "Long":{"type":"long"},
+    "Long":{
+      "type":"long",
+      "box":true
+    },
     "MapComparison":{
       "type":"string",
       "enum":["EQUALS"]
@@ -3301,13 +3285,11 @@
       "members":{
         "lowerInclusive":{
           "shape":"Double",
-          "documentation":"<p>The lowest number to be included in the filter.</p>",
-          "box":true
+          "documentation":"<p>The lowest number to be included in the filter.</p>"
         },
         "upperInclusive":{
           "shape":"Double",
-          "documentation":"<p>The highest number to be included in the filter.</p>",
-          "box":true
+          "documentation":"<p>The highest number to be included in the filter.</p>"
         }
       },
       "documentation":"<p>An object that describes the details of a number filter.</p>"
@@ -3460,7 +3442,8 @@
       "type":"structure",
       "required":[
         "source",
-        "vulnerabilityId"
+        "vulnerabilityId",
+        "vulnerablePackages"
       ],
       "members":{
         "cvss":{
@@ -3537,6 +3520,7 @@
     },
     "Port":{
       "type":"integer",
+      "box":true,
       "max":65535,
       "min":0
     },
@@ -3549,13 +3533,11 @@
       "members":{
         "begin":{
           "shape":"Port",
-          "documentation":"<p>The beginning port in a port range.</p>",
-          "box":true
+          "documentation":"<p>The beginning port in a port range.</p>"
         },
         "end":{
           "shape":"Port",
-          "documentation":"<p>The ending port in a port range.</p>",
-          "box":true
+          "documentation":"<p>The ending port in a port range.</p>"
         }
       },
       "documentation":"<p>Details about the port range associated with a finding.</p>"
@@ -3565,13 +3547,11 @@
       "members":{
         "beginInclusive":{
           "shape":"Port",
-          "documentation":"<p>The port number the port range begins at.</p>",
-          "box":true
+          "documentation":"<p>The port number the port range begins at.</p>"
         },
         "endInclusive":{
           "shape":"Port",
-          "documentation":"<p>The port number the port range ends at.</p>",
-          "box":true
+          "documentation":"<p>The port number the port range ends at.</p>"
         }
       },
       "documentation":"<p>An object that describes the details of a port range filter.</p>"
@@ -3673,8 +3653,7 @@
         },
         "affectedImages":{
           "shape":"Long",
-          "documentation":"<p>The number of container images impacted by the findings.</p>",
-          "box":true
+          "documentation":"<p>The number of container images impacted by the findings.</p>"
         },
         "repository":{
           "shape":"NonEmptyString",
@@ -3879,9 +3858,7 @@
         "SCAN_FREQUENCY_MANUAL",
         "SCAN_FREQUENCY_SCAN_ON_PUSH",
         "EC2_INSTANCE_STOPPED",
-        "PENDING_DISABLE",
-        "NO_INVENTORY",
-        "STALE_INVENTORY"
+        "PENDING_DISABLE"
       ]
     },
     "ScanType":{
@@ -3934,23 +3911,19 @@
       "members":{
         "all":{
           "shape":"Long",
-          "documentation":"<p>The total count of findings from all severities.</p>",
-          "box":true
+          "documentation":"<p>The total count of findings from all severities.</p>"
         },
         "critical":{
           "shape":"Long",
-          "documentation":"<p>The total count of critical severity findings.</p>",
-          "box":true
+          "documentation":"<p>The total count of critical severity findings.</p>"
         },
         "high":{
           "shape":"Long",
-          "documentation":"<p>The total count of high severity findings.</p>",
-          "box":true
+          "documentation":"<p>The total count of high severity findings.</p>"
         },
         "medium":{
           "shape":"Long",
-          "documentation":"<p>The total count of medium severity findings.</p>",
-          "box":true
+          "documentation":"<p>The total count of medium severity findings.</p>"
         }
       },
       "documentation":"<p>An object that contains the counts of aggregated finding per severity.</p>"
@@ -4333,13 +4306,11 @@
         },
         "estimatedMonthlyCost":{
           "shape":"MonthlyCostEstimate",
-          "documentation":"<p>The estimated monthly cost of Amazon Inspector.</p>",
-          "default":0
+          "documentation":"<p>The estimated monthly cost of Amazon Inspector.</p>"
         },
         "total":{
           "shape":"UsageValue",
-          "documentation":"<p>The total of usage.</p>",
-          "default":0
+          "documentation":"<p>The total of usage.</p>"
         },
         "type":{
           "shape":"UsageType",
@@ -4468,8 +4439,7 @@
         },
         "epoch":{
           "shape":"PackageEpoch",
-          "documentation":"<p>The epoch of the vulnerable package.</p>",
-          "default":0
+          "documentation":"<p>The epoch of the vulnerable package.</p>"
         },
         "filePath":{
           "shape":"FilePath",
@@ -4491,10 +4461,6 @@
           "shape":"PackageRelease",
           "documentation":"<p>The release of the vulnerable package.</p>"
         },
-        "remediation":{
-          "shape":"VulnerablePackageRemediation",
-          "documentation":"<p>The code to run in your environment to update packages with a fix available.</p>"
-        },
         "sourceLayerHash":{
           "shape":"SourceLayerHash",
           "documentation":"<p>The source layer hash of the vulnerable package.</p>"
@@ -4509,11 +4475,6 @@
     "VulnerablePackageList":{
       "type":"list",
       "member":{"shape":"VulnerablePackage"}
-    },
-    "VulnerablePackageRemediation":{
-      "type":"string",
-      "max":1024,
-      "min":1
     }
   },
   "documentation":"<p>Amazon Inspector is a vulnerability discovery service that automates continuous scanning for security vulnerabilities within your Amazon EC2 and Amazon ECR environments.</p>"
