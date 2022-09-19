@@ -21,7 +21,7 @@ class ReviewSearchResource(Resource) :
             limit = request.args.get('limit')
             offset = request.args.get('offset')
             query = '''
-                        select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, r.verified,
+                        select r.id as reviewId, r.prfId, r.prfName, u.id as userId, u.nickName, r.verified, r.title, r.imgUrl,
                         r.content, r.createdAt, r.updatedAt, count(rr.reviewId) as reviewRecommend, rc.viewCount, rt.rating
                         from review r
                         join prf on prf.mt20id = r.prfId
@@ -76,6 +76,43 @@ class ReviewMyListResource(Resource) :
             record = (userId, )
             cursor = connection.cursor(dictionary=True)
             cursor.execute(query, record)
+            resultList = cursor.fetchall()
+            i = 0
+            for record in resultList :
+                resultList[i]['createdAt'] = record['createdAt'].isoformat()
+                resultList[i]['updatedAt'] = record['updatedAt'].isoformat()
+                i += 1
+            cursor.close()
+            connection.close()
+
+        except mysql.connector.Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"error" : str(e)}, 503 #HTTPStatus.SERVICE_UNAVAILABLE
+
+        return{ "resultList" : resultList }, 200
+
+# 모든 리뷰 보기 (조회)
+class ReviewAllListResource(Resource) :
+    def get(self) :
+        try :
+            connection = get_connection()
+            limit = request.args.get('limit')
+            offset = request.args.get('offset')
+            query = '''
+                        select r.id as reviewId, u.id as userId, u.nickName, r.prfName, r.title, r.content, r.imgUrl, r.verified, r.createdAt, r.updatedAt,
+                        rc.viewCount, count(rr.reviewId) as reviewRecommend, pr.rating
+                        from review r
+                        left join user u on r.userId = u.id
+                        left join reviewCount rc on r.id = rc.reviewId
+                        left join reviewRecommend rr on rr.reviewId = r.id
+                        left join prfRating pr on pr.prfId = r.prfId
+                        group by rr.reviewId
+                        limit ''' + limit + ''' offset ''' + offset + ''';
+                    '''
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(query)
             resultList = cursor.fetchall()
             i = 0
             for record in resultList :
