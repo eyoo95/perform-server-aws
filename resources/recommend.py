@@ -49,13 +49,16 @@ class PerformaceRecomRealTimeRersource(Resource):
             # correlation으로 관계값 찾기
             df = matrix.corr() # 데이터가 어느정도 쌓이면 최소값을 조정
 
+            print(df)
+
             #####
 
             # 내 별점 리스트 가져오기
             query = '''select pr.userId, pr.prfId, pr.rating
                         from prfRating pr
-                        join prf
-                        on pr.prfId = prf.mt20id and pr.userId = %s;'''
+                        left join prf
+                        on pr.prfId = prf.mt20id
+                        where pr.userId = %s;'''
             record = (userId,)
             # select 문은 dictionary = True를 해준다.
             cursor = connection.cursor(dictionary = True)  # 데이터를 셀렉할때 키벨류로 가져온다.
